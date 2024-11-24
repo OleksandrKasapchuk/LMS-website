@@ -5,6 +5,7 @@ from django.views.generic import View, ListView, DetailView, CreateView, Templat
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from .forms import *
+from .mixins import *
 
 
 class IndexView(TemplateView):
@@ -33,8 +34,25 @@ class CourseCreateView(LoginRequiredMixin, View):
 		form = CourseCreateForm(request.POST, request.FILES)
 		if form.is_valid():
 			course = form.save(commit=False)
-			course.owner = self.request.user
+			course.user = self.request.user
 			course.save()
 			return redirect("course-list")
 		else:
 			pass
+
+
+class CourseUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
+	model = Course
+	def get(self, request, pk, *args, **kwargs):
+		return render(
+			request,
+			"course_system/edit_course.html",
+			context={"course": Course.objects.get(pk=pk)}
+		)
+	def post(self, request, pk, *args, **kwargs):
+		course = Course.objects.get(pk=pk)
+		course.name = request.POST.get('name')
+		if request.FILES.get('cover') != None:
+			course.cover = request.FILES.get('cover')
+		course.save()
+		return redirect(f"/courses/{course.pk}")

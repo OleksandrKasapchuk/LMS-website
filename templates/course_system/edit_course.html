@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{course.name}}{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<label for="cover">Edit Course:</label>
+	<input type="file" id="media" name="media" class="form-control" value="{{course.media.url}}">
+	{% if course.cover %}
+		<img src="{{course.cover.url}}" class="course-cover">
+	{% endif %}
+	<label for="name">Name:</label>
+	<input type="text" id="name" name="name" value="{{course.name}}">
+
+	<button type="submit">Submit</button>
+</form>
+
+{% endblock %}

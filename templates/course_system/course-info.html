@@ -3,14 +3,20 @@
 {% block title %}{{course.name}}{% endblock %}
 
 {% block content %}
+<br>
 <h1>Course info</h1>
+<br>
 <article class="course-container">
 	{% if course.cover %}
-		<img src="{{ course.cover.url }}" alt="">
+		<img src="{{ course.cover.url }}" class="course-cover" style="width: 100%; height:300px">
 	{% else %}
-		<div class="course-box"></div>
+		<div class="course-cover box"></div>
 	{% endif %}
-	<h2>{{course.name}}</h2>
-	<h3>{{course.owner}}</h3>
+	<article>
+		<h2>{{ course.name }}</h2>
+		<h3><a href="{% url 'user-info' course.user.pk %}">{{ course.user }}</a></h3>
+		<a href="{% url 'edit-course' course.pk %}">Edit <span class="material-symbols-outlined pointer">edit</span></a>
+	</article>
+	<a href="#">Add Lesson<span class="material-symbols-outlined">add_box</span><span class="sidebar-text"></span></a>
 </article>
 {% endblock %}
