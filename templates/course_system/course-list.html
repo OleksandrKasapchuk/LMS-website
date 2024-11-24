@@ -6,10 +6,22 @@
 
 {% for course in courses %}
 	<br>
-	<article>
-		<h2>{{course.name}}</h2>
-		<h3>{{course.owner}}</h3>
-	</article>
+    <article class="course-container">
+        <a href="{% url 'course-info' course.pk %}" class="course-link pointer">
+            <div class="image-container">
+                {% if course.cover %}
+                    <img src="{{ course.cover.url }}" class="course-cover">
+                {% else %}
+                    <div class="course-cover box"></div>
+                {% endif %}
+                <div class="text-overlay">
+                    <h2>{{ course.name }}</h2>
+                    <h3>{{ course.owner }}</h3>
+                </div>
+            </div>
+        </a>
+    </article>
+
 {% endfor %}
 
 {% endblock %}

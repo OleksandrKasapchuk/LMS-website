@@ -8,18 +8,11 @@ body {
 	font-size: 21px;
 }
 
-#navbarNav {
-	align-self: end;
-	width: 20vw !important;
-}
 .nav-item:hover {
 	background-color: lightgray;
 	transition: 0.5s;
 }
-.pointer {
-	cursor: pointer;
-	user-select: none;
-}
+
 .profile-avatar {
 	border-radius: 100px;
 	width: 175px;
@@ -35,4 +28,41 @@ body {
 }
 .gap3 {
 	gap: 80px;
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.course-cover {
+    width: 400px;
+    height: 200px;
+    border-radius: 15px;
+}
+.box {
+	background-color: gray;
+}
+.course-link {
+    text-decoration: none; 
+    color: inherit; 
+}
+
+.text-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5); /* Темний напівпрозорий фон */
+    color: white;
+    padding: 5px;
+    font-size: 14px;
+    width: 100%;
+    text-align: left;
+    border-bottom-left-radius: 15px; /* Закруглення знизу */
+    border-bottom-right-radius: 15px;
+}
+
+.pointer {
+	cursor: pointer;
+	user-select: none;
 }

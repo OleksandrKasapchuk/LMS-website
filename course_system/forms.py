@@ -7,11 +7,11 @@ class CourseCreateForm(forms.ModelForm):
 		model = Course
 		fields = ['name','cover']
 		widjets = {
-			"media": forms.FileInput()
+			"cover": forms.FileInput()
 		}
 
 
 # class CommentCreateForm(forms.ModelForm):
 # 	class Meta:
 # 		model = Comment
-# 		fields = ['content']
+# 		fields = ['content']15px;

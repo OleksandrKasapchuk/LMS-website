@@ -3,7 +3,13 @@
 {% block title %}{{course.name}}{% endblock %}
 
 {% block content %}
-<article class="">
+<h1>Course info</h1>
+<article class="course-container">
+	{% if course.cover %}
+		<img src="{{ course.cover.url }}" alt="">
+	{% else %}
+		<div class="course-box"></div>
+	{% endif %}
 	<h2>{{course.name}}</h2>
 	<h3>{{course.owner}}</h3>
 </article>
