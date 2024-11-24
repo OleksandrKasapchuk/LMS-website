@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import *
+from course_system.models import Course
+
 
 def register_user(request):
     if request.user.is_authenticated:
@@ -58,7 +60,8 @@ def user_info(request, pk):
     try:
         user = CustomUser.objects.get(id=pk)
         context = {
-            'user': user, 
+            'user': user,
+            "courses": Course.objects.filter(user=user),
         }
         return render(request, 'auth_system/user_info.html', context=context)
 

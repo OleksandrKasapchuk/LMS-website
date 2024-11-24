@@ -25,6 +25,24 @@
         <section>
             <h3>User courses:</h3>
             <h4><a href="{% url 'add-course' %}">Create a course</a></h4>
+            {% for course in courses %}
+                <br>
+                <article class="course-container">
+                    <a href="{% url 'course-info' course.pk %}" class="course-link pointer">
+                        <div class="image-container">
+                            {% if course.cover %}
+                                <img src="{{ course.cover.url }}" class="course-cover">
+                            {% else %}
+                                <div class="course-cover box"></div>
+                            {% endif %}
+                            <div class="text-overlay">
+                                <h2>{{ course.name }}</h2>
+                                <h3>{{ course.user }}</h3>
+                            </div>
+                        </div>
+                    </a>
+                </article>
+            {% endfor %}
         </section>
     </section>
 </article>
