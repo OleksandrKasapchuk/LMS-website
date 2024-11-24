@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<article class="row justify-content-center align-items-center">
+    <section class="col-lg-6 col-md-8 col-12 px-5">
+        <form method="POST" action="{% url 'login' %}">
+            <h1>Login</h1>
+            {% csrf_token %}
+            <section>
+                <label for="username">Username:</label>
+                <input type="text" required id="username"  name="username" class="form-control">
+            </section>
+            
+            <section>
+                <label for="password">Password:</label>
+                <input type="password" required id="password" name="password" class="form-control">
+            </section>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="{% url 'register' %}" >Do not have any account?</a>
+        </form>
+    </section>
+</article>
+
+{% endblock %}

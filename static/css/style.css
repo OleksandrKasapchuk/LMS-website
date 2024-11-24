@@ -1,0 +1,38 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: lightgray;
+	font-size: 21px;
+}
+
+#navbarNav {
+	align-self: end;
+	width: 20vw !important;
+}
+.nav-item:hover {
+	background-color: lightgray;
+	transition: 0.5s;
+}
+.pointer {
+	cursor: pointer;
+	user-select: none;
+}
+.profile-avatar {
+	border-radius: 100px;
+	width: 175px;
+	height: 175px;
+	border: white solid 2px;
+}
+
+.gap {
+	gap: 25px;
+}
+.gap2 {
+	gap: 50px;
+}
+.gap3 {
+	gap: 80px;
+}

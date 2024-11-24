@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{user.username}}{% endblock %}
+
+{% block content %}
+<br>
+<article class="row justify-content-center align-items-center">
+    <section class="col-lg-6 col-md-8 col-12 px-5">
+        <section class="d-flex gap3 ps-4 profile-header">
+            <img src="{{ user.avatar.url }}" class="profile-avatar">
+            <article class="d-flex flex-column gap">
+                <article class="d-flex gap">
+                    <a href="{% url 'user-info' user.pk %}" class="h4">{{user.username}}</a>
+                    {% if request.user == user %}
+                        <a href="{% url 'edit-user' user.id %}" class="btn btn-primary">Edit profile</a>
+                        <span class="material-symbols-outlined">settings</span>
+                    {% endif %}
+                </article>
+                
+                <h4><b>{{user.first_name}} {{user.last_name}}</b></h2>
+                
+            </article>
+        </section>
+        <br>
+        <section>
+            <h3>User courses:</h3>
+            <h4><a href="{% url 'add-course' %}">Create a course</a></h4>
+        </section>
+    </section>
+</article>
+
+{% endblock %}

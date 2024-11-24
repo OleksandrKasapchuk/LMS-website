@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Create Course{% endblock %}
+
+{% block content %}
+
+<article class="row justify-content-center align-items-center">
+    <section class="col-lg-6 col-md-8 col-12 px-5">
+        <form method="POST" action="{% url 'add-course' %}">
+            <h1>Create Course</h1>
+            {% csrf_token %}
+            <section>
+                <label for="name">Name:</label>
+                <input type="text" required id="name"  name="name" class="form-control">
+            </section>
+            
+            <section>
+                <label for="cover">Cover:</label>
+                <input type="file"  id="cover" name="cover" class="form-control">
+            </section>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</article>
+
+{% endblock %}
