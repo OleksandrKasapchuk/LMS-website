@@ -23,6 +23,11 @@ class CourseDetailView(DetailView):
 	template_name = "course_system/course-info.html"
 	context_object_name = "course"
 
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['lessons'] = Lesson.objects.filter(course=Course.objects.get(pk=self.kwargs["pk"]))
+		return context
+
 
 class CourseCreateView(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
@@ -56,3 +61,20 @@ class CourseUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
 			course.cover = request.FILES.get('cover')
 		course.save()
 		return redirect(f"/courses/{course.pk}")
+
+
+class LessonCreateView(LoginRequiredMixin, View):
+	def get(self, request, *args, **kwargs):
+		return render(
+			request,
+			"course_system/add_lesson.html",
+		)
+	def post(self, request, *args, **kwargs):
+		form = LessonCreateForm(request.POST, request.FILES)
+		if form.is_valid():
+			lesson = form.save(commit=False)
+			lesson.course = get_object_or_404(Course, id=self.kwargs['pk'])
+			lesson.save()
+			return redirect("course-info", pk=lesson.course.pk)
+		else:
+			pass

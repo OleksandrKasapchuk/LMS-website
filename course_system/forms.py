@@ -11,6 +11,15 @@ class CourseCreateForm(forms.ModelForm):
 		}
 
 
+class LessonCreateForm(forms.ModelForm):
+	class Meta:
+		model = Lesson
+		fields = ['name','content', 'upload_data']
+		widjets = {
+			"upload_data": forms.FileInput()
+		}
+
+
 # class CommentCreateForm(forms.ModelForm):
 # 	class Meta:
 # 		model = Comment

@@ -17,6 +17,10 @@
 		<h3><a href="{% url 'user-info' course.user.pk %}">{{ course.user }}</a></h3>
 		<a href="{% url 'edit-course' course.pk %}">Edit <span class="material-symbols-outlined pointer">edit</span></a>
 	</article>
-	<a href="#">Add Lesson<span class="material-symbols-outlined">add_box</span><span class="sidebar-text"></span></a>
+	<a href="{% url 'add-lesson' course.pk %}">Add Lesson<span class="material-symbols-outlined">add_box</span><span class="sidebar-text"></span></a>
+	{% for lesson in lessons %}
+	<br>
+	<h3>{{lesson.name}}</h3>
+	{% endfor %}
 </article>
 {% endblock %}

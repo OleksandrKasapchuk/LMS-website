@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Add Lesson{% endblock %}
+
+{% block content %}
+
+<article class="row justify-content-center align-items-center">
+    <section class="col-lg-6 col-md-8 col-12 px-5">
+        <form method="POST" enctype="multipart/form-data">
+            <h1>Add Lesson</h1>
+            {% csrf_token %}
+            <section>
+                <label for="name">Name:</label>
+                <input type="text" required id="name"  name="name" class="form-control">
+            </section>
+            <section>
+                <label for="content">Content:</label>
+                <input type="text" required id="content"  name="content" class="form-control">
+            </section>
+            
+            <section>
+                <label for="upload_data">Upload_data:</label>
+                <input type="file"  id="upload_data" name="upload_data" class="form-control">
+            </section>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</article>
+
+{% endblock %}
