@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}{{lesson.name}} - {{lesson.course.name}}{% endblock %}
+
+{% block content %}
+{% load custom_tags %}
+<br>
+<h1>{{ lesson.name }}</h1>
+<a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}">Delete lesson</a>
+<h3><a href="{% url 'user-info' lesson.course.user.pk %}">{{ lesson.course.user }}</a></h3> 
+
+<hr>
+<article class="lesson-container">
+	<section>
+		<p>{{lesson.content}}</p>
+		{% if lesson.upload_data %}
+				{% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
+					<a href="{{ lesson.upload_data.url}}" target="_blank"><img src="{{lesson.upload_data.url}}"  style="max-width: 500px;"></a>
+				{% elif lesson.upload_data.url|endswith:".mp4" %}
+					<video controls>
+						<source src="{{ lesson.upload_data.url}}" type="mp4/video">
+						Your browser does not support video tag
+					</video>
+				{% elif lesson.upload_data.url|endswith:"mp3" %}
+					<audio src="{{ lesson.upload_data.url}}" controls></audio>
+				{% else %}
+					<a href="{{ lesson.upload_data.url}}" target="_blank">Open file</a>
+					<br>
+					<a href="{{ lesson.upload_data.url}}">Download file</a>
+				{% endif %}
+			{% endif %}
+		</section>
+	</section>
+	<br>
+	<section>
+		<form>
+			<input type="text" placeholder="comment">
+			<button type="submit">Submit</button>
+		</form>
+	</section>
+</article>
+{% endblock %}

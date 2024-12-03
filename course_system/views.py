@@ -14,13 +14,13 @@ class IndexView(TemplateView):
 
 class CourseView(ListView):
 	model = Course
-	template_name = "course_system/course-list.html"
+	template_name = "course_system/course_list.html"
 	context_object_name = "courses"
 
 
 class CourseDetailView(DetailView):
 	model = Course
-	template_name = "course_system/course-info.html"
+	template_name = "course_system/course_info.html"
 	context_object_name = "course"
 
 	def get_context_data(self, **kwargs):
@@ -75,6 +75,30 @@ class LessonCreateView(LoginRequiredMixin, View):
 			lesson = form.save(commit=False)
 			lesson.course = get_object_or_404(Course, id=self.kwargs['pk'])
 			lesson.save()
-			return redirect("course-info", pk=lesson.course.pk)
+			return redirect("course-details", pk=lesson.course.pk)
 		else:
 			pass
+
+
+class LessonDetailView(DetailView):
+	model = Lesson
+	template_name = "course_system/lesson_info.html"
+	context_object_name = "lesson"
+
+
+class CourseDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
+	model = Course
+	template_name = "course_system/delete.html"
+	context_object_name = "object"
+
+	def get_success_url(self) -> str:
+		return reverse_lazy("course-list")
+
+
+class LessonDeleteView(LoginRequiredMixin, DeleteView):
+	model = Lesson
+	template_name = "course_system/delete.html"
+	context_object_name = "object"
+
+	def get_success_url(self) -> str:
+		return reverse_lazy("course-details", kwargs={"pk": self.kwargs['course']})

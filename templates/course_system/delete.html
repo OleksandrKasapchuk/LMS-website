@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}{{object.name}}{% endblock %}
+
+{% block content %}
+<br>
+<article>
+	<h2>Are you sure you want to delete {{object.name}}?</h2>
+	<form method="post" class="form_flex">
+		{% csrf_token %}
+		<button type="submit">Submit</button>
+	</form>
+</article>
+
+
+{% endblock %}

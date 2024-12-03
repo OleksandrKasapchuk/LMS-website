@@ -28,7 +28,7 @@
             {% for course in courses %}
                 <br>
                 <article class="course-container">
-                    <a href="{% url 'course-info' course.pk %}" class="course-link pointer">
+                    <a href="{% url 'course-details' course.pk %}" class="course-link pointer">
                         <div class="image-container">
                             {% if course.cover %}
                                 <img src="{{ course.cover.url }}" class="course-cover">
