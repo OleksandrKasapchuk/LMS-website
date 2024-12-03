@@ -5,6 +5,7 @@
 {% block content %}
 <br>
 <h4><a href="{% url 'add-course' %}">Create a course</a></h4>
+<h4><a href="{% url 'join-course' %}">Join a course</a></h4>
 
 {% for course in courses %}
 	<br>
@@ -25,5 +26,25 @@
     </article>
 
 {% endfor %}
+<br>
+<h2>Own courses:</h2>
+{% for course in own_courses %}
+	<br>
+    <article class="course-container">
+        <a href="{% url 'course-details' course.pk %}" class="course-link pointer">
+            <div class="image-container">
+                {% if course.cover %}
+                    <img src="{{ course.cover.url }}" class="course-cover">
+                {% else %}
+                    <div class="course-cover box"></div>
+                {% endif %}
+                <div class="text-overlay">
+                    <h2>{{ course.name }}</h2>
+                    <h3>{{ course.user }}</h3>
+                </div>
+            </div>
+        </a>
+    </article>
 
+{% endfor %}
 {% endblock %}

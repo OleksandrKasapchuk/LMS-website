@@ -17,6 +17,13 @@ class CourseView(ListView):
 	template_name = "course_system/course_list.html"
 	context_object_name = "courses"
 
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["own_courses"] = Course.objects.filter(user=self.request.user)
+		return context
+	def get_queryset(self):
+		return Course.objects.filter(subscribers__user=self.request.user)
+
 
 class CourseDetailView(DetailView):
 	model = Course
@@ -128,3 +135,24 @@ class LessonUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
 			lesson.upload_data = request.FILES.get('upload_data')
 		lesson.save()
 		return redirect(f"/courses/{lesson.course.pk}/{pk}")
+
+
+class SubscriptionView(LoginRequiredMixin, View):
+	def get(self, request, *args, **kwargs):
+		return render(
+			request,
+			"course_system/subscription.html"
+		)
+	
+	def post(self, request, *args, **kwargs):
+		code = request.POST.get("code")  # Отримуємо ID курсу з параметрів URL
+		course = get_object_or_404(Course, code=code)  # Знаходимо курс або повертаємо 404
+
+		# Перевіряємо, чи користувач вже підписаний на курс
+		if not Subscription.objects.filter(user=request.user, course=course).exists():
+			# Створюємо нову підписку
+			Subscription.objects.create(user=request.user, course=course)
+			return redirect("course-list")  # Перенаправляємо на список підписок
+
+		# Якщо вже підписаний, перенаправляємо назад
+		return redirect("course_detail", pk=course.pk)

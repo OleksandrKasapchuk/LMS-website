@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Join Course{% endblock %}
+
+{% block content %}
+
+<article class="row justify-content-center align-items-center">
+    <section class="col-lg-6 col-md-8 col-12 px-5">
+        <form method="POST" action="{% url 'join-course' %}">
+            <h1>Join Course</h1>
+            {% csrf_token %}
+            <section>
+                <label for="code">Code:</label>
+                <input type="text" required id="code"  name="code" class="form-control">
+            </section>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </section>
+</article>
+
+{% endblock %}
