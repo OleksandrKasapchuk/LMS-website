@@ -13,6 +13,6 @@ urlpatterns = [
 
 	path('courses/<int:pk>/add-lesson', LessonCreateView.as_view(), name='add-lesson'),
 	path('courses/<int:course>/<int:pk>', LessonDetailView.as_view(), name='lesson-details'),
-	# path('courses/<int:course>/<int:pk>/delete', LessonDetailView.as_view(), name='lesson-edit'),
+	path('courses/<int:course>/<int:pk>/delete', LessonUpdateView.as_view(), name='lesson-edit'),
 	path('courses/<int:course>/<int:pk>/delete', LessonDeleteView.as_view(), name='lesson-delete'),
 ]

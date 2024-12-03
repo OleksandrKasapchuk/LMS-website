@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{lesson.name}}{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data">
+	{% csrf_token %}
+	<label for="cover">Edit Lesson:</label>
+	<input type="file" id="cover" name="cover" class="form-control" value="{% if lesson.upload_data %}{{lesson.upload_data.url}}{% endif %}">
+	
+	<label for="name">Name:</label>
+	<input type="text" id="name" name="name" value="{{lesson.name}}">
+
+	<button type="submit">Submit</button>
+</form>
+
+{% endblock %}

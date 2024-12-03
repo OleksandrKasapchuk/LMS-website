@@ -6,7 +6,9 @@
 {% load custom_tags %}
 <br>
 <h1>{{ lesson.name }}</h1>
+{% if request.user == lesson.course.user %}
 <a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}">Delete lesson</a>
+{% endif %}
 <h3><a href="{% url 'user-info' lesson.course.user.pk %}">{{ lesson.course.user }}</a></h3> 
 
 <hr>

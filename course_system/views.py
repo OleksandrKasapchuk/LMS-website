@@ -65,17 +65,26 @@ class CourseUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
 
 class LessonCreateView(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
-		return render(
-			request,
-			"course_system/add_lesson.html",
-		)
+		course = Course.objects.get(pk=self.kwargs['pk'])
+		if course.user == request.user:
+			return render(
+				request,
+				"course_system/add_lesson.html",
+			)
+		else:
+			raise PermissionDenied
+
 	def post(self, request, *args, **kwargs):
 		form = LessonCreateForm(request.POST, request.FILES)
 		if form.is_valid():
 			lesson = form.save(commit=False)
-			lesson.course = get_object_or_404(Course, id=self.kwargs['pk'])
-			lesson.save()
-			return redirect("course-details", pk=lesson.course.pk)
+			course = get_object_or_404(Course, id=self.kwargs['pk'])
+			lesson.course = course
+			if course.user == request.user:
+				lesson.save()
+				return redirect("course-details", pk=lesson.course.pk)
+			else:
+				raise PermissionDenied
 		else:
 			pass
 
@@ -95,10 +104,27 @@ class CourseDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
 		return reverse_lazy("course-list")
 
 
-class LessonDeleteView(LoginRequiredMixin, DeleteView):
+class LessonDeleteView(LoginRequiredMixin,LessonUserIsOwnerMixin, DeleteView):
 	model = Lesson
 	template_name = "course_system/delete.html"
 	context_object_name = "object"
 
 	def get_success_url(self) -> str:
 		return reverse_lazy("course-details", kwargs={"pk": self.kwargs['course']})
+
+
+class LessonUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
+	model = Course
+	def get(self, request, pk, *args, **kwargs):
+		return render(
+			request,
+			"course_system/edit_lesson.html",
+			context={"lesson": Lesson.objects.get(pk=pk)}
+		)
+	def post(self, request, pk, *args, **kwargs):
+		lesson = Lesson.objects.get(pk=pk)
+		lesson.name = request.POST.get('name')
+		if request.FILES.get('upload_data') != None:
+			lesson.upload_data = request.FILES.get('upload_data')
+		lesson.save()
+		return redirect(f"/courses/{lesson.course.pk}/{pk}")

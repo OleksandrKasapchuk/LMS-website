@@ -3,6 +3,8 @@
 {% block title %}Courses{% endblock %}
 
 {% block content %}
+<br>
+<h4><a href="{% url 'add-course' %}">Create a course</a></h4>
 
 {% for course in courses %}
 	<br>
