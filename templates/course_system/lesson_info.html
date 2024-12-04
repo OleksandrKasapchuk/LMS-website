@@ -35,10 +35,66 @@
 	</section>
 	<br>
 	<section>
-		<form>
-			<input type="text" placeholder="comment">
-			<button type="submit">Submit</button>
-		</form>
+		<ul id="comments" class="comments">
+			{% for comment in lesson.comments.all %}
+				<li id="comment-{{ comment.pk }}" class="comment-container mt-3 d-flex">
+					<section class="d-flex flex-column">
+						<section class="d-flex">
+							<p><a href="{% url 'user-info' comment.user.pk %}"><b>{{ comment.user }}</b></a> {{comment.content}}</p>
+						</section>					
+					</section>
+				</li>
+			{% endfor %}
+		</ul>
+		<section class="msg-input d-flex"><input id="message-content" placeholder="Add a comment..."><span class="material-symbols-outlined pointer p-3 pt-2" onclick="SendComment({{ lesson.course.pk }}, {{ lesson.pk }})">Send</span></section>
+		
 	</section>
 </article>
+<script>
+	function SendComment(courseId, lessonId) {
+    const content = document.getElementById('message-content').value.trim();
+    if (content === '') {
+        alert('Please enter the text.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('content', content);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch(`/courses/${courseId}/${lessonId}`, { // Оновлено URL
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const lessonComments = document.getElementById('comments');
+            const newComment = document.createElement('li');
+            newComment.classList.add('comment-container', 'mt-3', 'd-flex');
+            newComment.innerHTML = `
+                <section class="d-flex flex-column">
+                    <section class="d-flex">
+                        <p><a href="${data.user_url}"><b>${data.username}</b></a> ${data.content}</p>
+                    </section>
+                </section>
+            `;
+            lessonComments.appendChild(newComment);
+            document.getElementById('message-content').value = '';
+        } else {
+            alert('Error sending message: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+</script>
 {% endblock %}

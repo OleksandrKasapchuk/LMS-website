@@ -69,3 +69,14 @@ a {
 	cursor: pointer;
 	user-select: none;
 }
+
+.my-active {
+    font-weight: bold;
+}
+
+.msg-input {
+	width: 95%;
+	border-radius: 20px;
+	border: 2px solid rgba(255, 255, 255,0.2);
+	height: 50px;
+}

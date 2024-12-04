@@ -19,10 +19,19 @@ class CourseView(ListView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context["own_courses"] = Course.objects.filter(user=self.request.user)
+
+		category = self.request.GET.get('category', 'joined')
+
+		if category == 'joined' and self.request.user.is_authenticated:
+			# Отримуємо курси, на які підписаний користувач
+			subscribed_courses = Subscription.objects.filter(user=self.request.user).values_list('course', flat=True)
+			context['courses'] = Course.objects.filter(id__in=subscribed_courses)
+		else:
+			# Отримуємо курси, створені користувачем
+			context['courses'] = Course.objects.filter(user=self.request.user)
+
+		context['category'] = category
 		return context
-	def get_queryset(self):
-		return Course.objects.filter(subscribers__user=self.request.user)
 
 
 class CourseDetailView(DetailView):
@@ -101,6 +110,28 @@ class LessonDetailView(DetailView):
 	template_name = "course_system/lesson_info.html"
 	context_object_name = "lesson"
 
+	def post(self, request,pk, *args, **kwargs):
+		lesson = get_object_or_404(Lesson, pk=pk)
+		content = request.POST.get('content')
+		try:
+			comment = Comment.objects.create(
+			lesson=lesson,
+			user=request.user,
+			content=content
+			)
+			if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+				return JsonResponse({
+					'success': True,
+					'username': request.user.username,
+					'content': comment.content,
+					'avatar_url': request.user.avatar.url,
+					'date_published': comment.date_published,
+					'user_url': reverse_lazy('user-info', kwargs={"pk":comment.user.pk}),
+				})
+			return redirect('lesson-details', pk=comment.lesson.pk, course=comment.lesson.course.pk)
+		except Exception as e:
+			if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+				return JsonResponse({'success': False, 'error': str(e)})
 
 class CourseDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
 	model = Course

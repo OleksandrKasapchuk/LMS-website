@@ -27,13 +27,14 @@ class Course(models.Model):
 
 
 class Lesson(models.Model):
-	name = models.CharField(max_length=50)
-	content = models.TextField()
-	course = models.ForeignKey(Course, on_delete=models.CASCADE)
-	upload_data = models.FileField(upload_to="lesson_media", null=True, blank=True)
+    name = models.CharField(max_length=50)
+    content = models.TextField()
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    upload_data = models.FileField(upload_to="lesson_media", null=True, blank=True)
+    date_to = models.DateTimeField(blank=True, null=True)
 
-	def __str__(self):
-		return f"{self.name} -  {self.course}"
+    def __str__(self):
+        return f"{self.name} -  {self.course}"
 
 
 class Subscription(models.Model):
@@ -46,3 +47,34 @@ class Subscription(models.Model):
 
 	def __str__(self):
 		return f"{self.user} підписався на {self.course}"
+
+
+class Comment(models.Model):
+	content = models.CharField(max_length=100)
+	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="comments")
+	lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name="comments")
+	date_published = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return f"{self.user} - {self.date_published}"
+	
+	class Meta:
+		ordering = ('-date_published',)
+
+
+class Answer(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="answers")
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name="answers")
+    upload_data = models.FileField(upload_to="answer_media")
+    date_published = models.DateTimeField(auto_now_add=True)
+
+
+# class Like(models.Model):
+# 	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="likes")
+# 	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+
+# 	class Meta:
+# 		unique_together = ('user', 'post')
+
+# 	def __str__(self):
+# 		return f"{self.user} - {self.post}"
