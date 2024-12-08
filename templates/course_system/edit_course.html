@@ -3,17 +3,25 @@
 {% block title %}Edit {{course.name}}{% endblock %}
 
 {% block content %}
-<form method="POST" enctype="multipart/form-data">
-	{% csrf_token %}
-	<label for="cover">Edit Course:</label>
-	<input type="file" id="cover" name="cover" class="form-control">
-	{% if course.cover %}
-		<img src="{{course.cover.url}}" class="course-cover">
-	{% endif %}
-	<label for="name">Name:</label>
-	<input type="text" id="name" name="name" value="{{course.name}}">
+<article class="container">
+	<article class="row justify-content-center align-items-center">
+		<section class="col-lg-6 col-md-8 col-12 px-5">
+			<form method="POST" enctype="multipart/form-data">
+				{% csrf_token %}
+				<label for="cover">Edit Course:</label>
+				<input type="file" id="cover" name="cover" class="form-control">
+				<br>
+				{% if course.cover %}
+					<img src="{{course.cover.url}}" class="course-cover">
+				<br>
+				{% endif %}
+				<br>
+				<label for="name">Name:</label>
+				<input type="text" id="name" name="name" value="{{course.name}}">
 
-	<button type="submit">Submit</button>
-</form>
-
+				<button type="submit">Submit</button>
+			</form>
+		</section>
+	</article>
+</article>
 {% endblock %}

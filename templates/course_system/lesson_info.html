@@ -5,50 +5,94 @@
 {% block content %}
 {% load custom_tags %}
 <br>
-<h1>{{ lesson.name }}</h1>
-{% if request.user == lesson.course.user %}
-<a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}">Delete lesson</a>
-{% endif %}
-<h3><a href="{% url 'user-info' lesson.course.user.pk %}">{{ lesson.course.user }}</a></h3> 
-
-<hr>
-<article class="lesson-container">
-	<section>
-		<p>{{lesson.content}}</p>
-		{% if lesson.upload_data %}
-				{% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
-					<a href="{{ lesson.upload_data.url}}" target="_blank"><img src="{{lesson.upload_data.url}}"  style="max-width: 500px;"></a>
-				{% elif lesson.upload_data.url|endswith:".mp4" %}
-					<video controls>
-						<source src="{{ lesson.upload_data.url}}" type="mp4/video">
-						Your browser does not support video tag
-					</video>
-				{% elif lesson.upload_data.url|endswith:"mp3" %}
-					<audio src="{{ lesson.upload_data.url}}" controls></audio>
-				{% else %}
-					<a href="{{ lesson.upload_data.url}}" target="_blank">Open file</a>
-					<br>
-					<a href="{{ lesson.upload_data.url}}">Download file</a>
-				{% endif %}
-			{% endif %}
-		</section>
-	</section>
-	<br>
-	<section>
-		<ul id="comments" class="comments">
-			{% for comment in lesson.comments.all %}
-				<li id="comment-{{ comment.pk }}" class="comment-container mt-3 d-flex">
-					<section class="d-flex flex-column">
-						<section class="d-flex">
-							<p><a href="{% url 'user-info' comment.user.pk %}"><b>{{ comment.user }}</b></a> {{comment.content}}</p>
-						</section>					
-					</section>
-				</li>
-			{% endfor %}
-		</ul>
-		<section class="msg-input d-flex"><input id="message-content" placeholder="Add a comment..."><span class="material-symbols-outlined pointer p-3 pt-2" onclick="SendComment({{ lesson.course.pk }}, {{ lesson.pk }})">Send</span></section>
-		
-	</section>
+<article class="d-flex">
+    <section class="d-flex flex-column">
+        <h1>{{ lesson.name }} </h1>{% if lesson.edited %} <i>(Edited)</i> <br>{% endif %}
+        {% if lesson.date_to %}
+        <h3>To {{lesson.date_to}}</h3>
+        {% endif %}
+        {% if request.user == lesson.course.user %}
+            <a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}">Delete lesson</a>
+            <br>
+            <a href="{% url 'lesson-edit' lesson.course.pk lesson.pk %}">Edit lesson</a>
+        {% endif %}
+        <h3><a href="{% url 'user-info' lesson.course.user.pk %}">{{ lesson.course.user }}</a></h3> 
+    
+    <hr>
+    <section>
+        <p>{{lesson.content}}</p>
+        {% if lesson.upload_data %}
+            {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
+                <a href="{{ lesson.upload_data.url}}" target="_blank"><img src="{{lesson.upload_data.url}}"  style="max-width: 500px;"></a>
+            {% elif lesson.upload_data.url|endswith:".mp4" %}
+                <video controls>
+                    <source src="{{ lesson.upload_data.url}}" type="mp4/video">
+                    Your browser does not support video tag
+                </video>
+            {% elif lesson.upload_data.url|endswith:"mp3" %}
+                <audio src="{{ lesson.upload_data.url}}" controls></audio>
+            {% else %}
+                <a href="{{ lesson.upload_data.url}}" target="_blank">Open file</a>
+                <br>
+                <a href="{{ lesson.upload_data.url}}">Download file</a>
+            {% endif %}
+        {% endif %}
+    </section>
+    <br>
+    <section>
+        <ul id="comments" class="comments">
+            {% for comment in lesson.comments.all %}
+                <li id="comment-{{ comment.pk }}" class="comment-container mt-3 d-flex">
+                    <section class="d-flex flex-column">
+                        <section class="d-flex">
+                            <p><a href="{% url 'user-info' comment.user.pk %}"><b>{{ comment.user }}</b></a> {{comment.content}}</p>
+                        </section>					
+                    </section>
+                </li>
+            {% endfor %}
+        </ul>
+        <section class="msg-input d-flex"><input id="message-content" placeholder="Add a comment..."><span class="material-symbols-outlined pointer p-3 pt-2" onclick="SendComment({{ lesson.course.pk }}, {{ lesson.pk }})">Send</span></section>
+    </section>
+    </section>
+        {% if request.user != lesson.course.user %}
+            <section>
+                {% if user_has_answered %}
+                    <!-- Якщо користувач уже здав роботу -->
+                    <div class="alert alert-success">You have uploaded already!</div>
+    
+                    <p>Uploaded file: 
+                        {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
+    					    <a href="{{ user_answer.upload_data.url}}" target="_blank"><img src="{{user_answer.upload_data.url}}"  style="max-width: 500px;"></a>
+    				    {% elif lesson.upload_data.url|endswith:".mp4" %}
+                            <video controls>
+                                <source src="{{ user_answer.upload_data.url}}" type="mp4/video">
+                                Your browser does not support video tag
+                            </video>
+                        {% elif lesson.upload_data.url|endswith:"mp3" %}
+                            <audio src="{{ user_answer.upload_data.url}}" controls></audio>
+                        {% else %}
+                            <a href="{{ user_answer.upload_data.url}}" target="_blank">Open file</a>
+                            <br>
+                            <a href="{{ user_answer.upload_data.url}}">Download file</a>
+    				    {% endif %}
+                    <p>Uploaded on: {{ user_answer.date_published }}</p>
+                    <!-- Кнопка повернення -->
+                    <form method="POST" action="{% url 'return-answer' lesson.course.pk lesson.pk %}" class="mt-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Return answer</button>
+                    </form>
+                {% else %}
+                    <!-- Якщо користувач ще не здав роботу -->
+                    <form method="POST" enctype="multipart/form-data" action="{% url 'lesson-answer' lesson.course.pk lesson.pk %}">
+                        {% csrf_token %}
+                        <label for="data">Upload File:</label>
+                        <input type="file" id="data" name="data" class="form-control">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </form>
+                {% endif %}
+            </section>
+            
+        {% endif %}
 </article>
 <script>
 	function SendComment(courseId, lessonId) {

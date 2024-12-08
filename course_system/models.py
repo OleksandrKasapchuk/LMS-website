@@ -1,8 +1,8 @@
 from django.db import models
 from auth_system.models import *
+from django.utils.timezone import now
 import random
 import string
-
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
@@ -32,9 +32,24 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     upload_data = models.FileField(upload_to="lesson_media", null=True, blank=True)
     date_to = models.DateTimeField(blank=True, null=True)
+    edited = models.BooleanField(default=False)  # Поле для відстеження редагування
+    last_edited_at = models.DateTimeField(null=True, blank=True)  # Дата останнього редагування
 
+    def save(self, *args, **kwargs):
+        # Перевіряємо, чи це оновлення існуючого об'єкта
+        if self.pk is not None:
+            original = Lesson.objects.get(pk=self.pk)
+            # Якщо будь-яке поле змінено, встановлюємо прапорець "edited" і час
+            if original.name != self.name or original.content != self.content or original.date_to != self.date_to:
+                self.edited = True
+                self.last_edited_at = now()
+        super().save(*args, **kwargs)
+    
     def __str__(self):
-        return f"{self.name} -  {self.course}"
+        return f"{self.name} - {self.course}"
+    
+    def get_user_answer(self, user):
+        return self.answers.filter(user=user).first()
 
 
 class Subscription(models.Model):
@@ -68,6 +83,8 @@ class Answer(models.Model):
     upload_data = models.FileField(upload_to="answer_media")
     date_published = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.user} - {self.lesson} - {self.date_published}"
 
 # class Like(models.Model):
 # 	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="likes")

@@ -22,7 +22,9 @@ a {
 	height: 175px;
 	border: white solid 2px;
 }
-
+.noselect {
+	user-select: none;
+}
 .gap {
 	gap: 25px;
 }
@@ -79,4 +81,35 @@ a {
 	border-radius: 20px;
 	border: 2px solid rgba(255, 255, 255,0.2);
 	height: 50px;
+}
+
+.course-cover-container {
+    position: relative;
+    display: inline-block;
+    width: 100%; /* або задайте конкретну ширину, наприклад, 400px */
+    height: 300px; /* Задайте висоту відповідно до розміру картинки */
+    overflow: hidden; /* Приберіть зайвий контент за межами контейнера */
+}
+
+.main-course-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Забезпечує збереження пропорцій */
+	border-radius: 15px;
+}
+
+.course-caption {
+    position: absolute;
+    bottom: 10px; /* Відступ віднизу */
+    left: 10px;   /* Відступ зліва */
+    padding: 5px 10px; /* Внутрішні відступи */
+    font-size: 36px; /* Розмір тексту */
+}
+.course-edit {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	background-color: rgba(0, 0, 0,0.3);
+	border-radius: 10px;
+	padding: 10px;
 }

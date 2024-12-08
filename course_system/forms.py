@@ -14,7 +14,7 @@ class CourseCreateForm(forms.ModelForm):
 class LessonCreateForm(forms.ModelForm):
 	class Meta:
 		model = Lesson
-		fields = ['name','content', 'upload_data']
+		fields = ['name','content', 'upload_data', 'date_to']
 		widjets = {
 			"upload_data": forms.FileInput()
 		}

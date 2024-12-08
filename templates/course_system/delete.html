@@ -4,7 +4,7 @@
 
 {% block content %}
 <br>
-<article>
+<article class="container">
 	<h2>Are you sure you want to delete {{object.name}}?</h2>
 	<form method="post" class="form_flex">
 		{% csrf_token %}

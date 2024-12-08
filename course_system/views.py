@@ -8,10 +8,6 @@ from .forms import *
 from .mixins import *
 
 
-class IndexView(TemplateView):
-	template_name = "course_system/index.html"
-
-
 class CourseView(ListView):
 	model = Course
 	template_name = "course_system/course_list.html"
@@ -57,7 +53,7 @@ class CourseCreateView(LoginRequiredMixin, View):
 			course = form.save(commit=False)
 			course.user = self.request.user
 			course.save()
-			return redirect("course-list")
+			return redirect("index")
 		else:
 			pass
 
@@ -76,7 +72,7 @@ class CourseUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
 		if request.FILES.get('cover') != None:
 			course.cover = request.FILES.get('cover')
 		course.save()
-		return redirect(f"/courses/{course.pk}")
+		return redirect(f"{course.pk}")
 
 
 class LessonCreateView(LoginRequiredMixin, View):
@@ -132,6 +128,20 @@ class LessonDetailView(DetailView):
 		except Exception as e:
 			if request.headers.get('x-requested-with') == 'XMLHttpRequest':
 				return JsonResponse({'success': False, 'error': str(e)})
+	
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		lesson = self.get_object()
+		user = self.request.user
+
+		# Перевіряємо, чи користувач здав роботу
+		context['user_has_answered'] = lesson.answers.filter(user=user).exists()
+
+		# Додаємо відповідь користувача, якщо є
+		context['user_answer'] = lesson.answers.filter(user=user).first()
+
+		return context
+
 
 class CourseDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
 	model = Course
@@ -139,7 +149,7 @@ class CourseDeleteView(LoginRequiredMixin, UserIsOwnerMixin, DeleteView):
 	context_object_name = "object"
 
 	def get_success_url(self) -> str:
-		return reverse_lazy("course-list")
+		return reverse_lazy("index")
 
 
 class LessonDeleteView(LoginRequiredMixin,LessonUserIsOwnerMixin, DeleteView):
@@ -151,8 +161,8 @@ class LessonDeleteView(LoginRequiredMixin,LessonUserIsOwnerMixin, DeleteView):
 		return reverse_lazy("course-details", kwargs={"pk": self.kwargs['course']})
 
 
-class LessonUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
-	model = Course
+class LessonUpdateView(LoginRequiredMixin, LessonUserIsOwnerMixin, UpdateView):
+	model = Lesson
 	def get(self, request, pk, *args, **kwargs):
 		return render(
 			request,
@@ -162,10 +172,15 @@ class LessonUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
 	def post(self, request, pk, *args, **kwargs):
 		lesson = Lesson.objects.get(pk=pk)
 		lesson.name = request.POST.get('name')
+		lesson.content = request.POST.get('content')
+
+		if request.POST.get('date_to'):
+			lesson.date_to = request.POST.get('date_to')
+
 		if request.FILES.get('upload_data') != None:
 			lesson.upload_data = request.FILES.get('upload_data')
 		lesson.save()
-		return redirect(f"/courses/{lesson.course.pk}/{pk}")
+		return redirect(f"{lesson.course.pk}/{pk}")
 
 
 class SubscriptionView(LoginRequiredMixin, View):
@@ -183,7 +198,39 @@ class SubscriptionView(LoginRequiredMixin, View):
 		if not Subscription.objects.filter(user=request.user, course=course).exists():
 			# Створюємо нову підписку
 			Subscription.objects.create(user=request.user, course=course)
-			return redirect("course-list")  # Перенаправляємо на список підписок
+			return redirect("index")  # Перенаправляємо на список підписок
 
 		# Якщо вже підписаний, перенаправляємо назад
 		return redirect("course_detail", pk=course.pk)
+
+
+class AddAnswerView(LoginRequiredMixin,View):
+    def post(self, request, *args, **kwargs):
+        lesson = get_object_or_404(Lesson, pk=self.kwargs['pk'])
+        
+        # Перевіряємо, чи вже є відповідь від цього користувача
+        answer = Answer.objects.filter(user=request.user, lesson=lesson).first()
+        
+        if not answer:  # Якщо відповіді ще немає, створюємо нову
+            answer = Answer.objects.create(
+                user=request.user,
+                lesson=lesson,
+                upload_data=request.FILES.get('data')
+            )
+
+        return redirect(f"{lesson.course.pk}/{lesson.pk}")
+
+
+class AnswerReturnView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        lesson = get_object_or_404(Lesson, pk=self.kwargs['pk'])
+        user = request.user
+
+        # Отримуємо відповідь користувача
+        answer = lesson.answers.filter(user=user).first()
+
+        if answer:
+            answer.delete()  # Видаляємо відповідь
+            return JsonResponse({'success': True, 'message': 'Робота повернена успішно.'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Робота не знайдена.'}, status=404)

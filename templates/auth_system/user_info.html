@@ -3,48 +3,54 @@
 {% block title %}{{user.username}}{% endblock %}
 
 {% block content %}
-<br>
-<article class="row justify-content-center align-items-center">
-    <section class="col-lg-6 col-md-8 col-12 px-5">
-        <section class="d-flex gap3 ps-4 profile-header">
-            <img src="{{ user.avatar.url }}" class="profile-avatar">
-            <article class="d-flex flex-column gap">
-                <article class="d-flex gap">
-                    <a href="{% url 'user-info' user.pk %}" class="h4">{{user.username}}</a>
-                    {% if request.user == user %}
-                        <a href="{% url 'edit-user' user.id %}" class="btn btn-primary">Edit profile</a>
-                        <span class="material-symbols-outlined">settings</span>
-                    {% endif %}
+<article class="container mt-3">
+    <article class="row justify-content-center align-items-center">
+        <section class="col-lg-6 col-md-8 col-12 px-5">
+            <section class="d-flex gap3 ps-4 profile-header">
+                <img src="{{ user.avatar.url }}" class="profile-avatar">
+                <article class="d-flex flex-column gap">
+                    <article class="d-flex gap">
+                        <a href="{% url 'user-info' user.pk %}" class="h4">{{user.username}}</a>
+                        {% if request.user == user %}
+                            <a href="{% url 'edit-user' user.id %}" class="btn btn-primary">Edit profile</a>
+                            <span class="material-symbols-outlined">settings</span>
+                        {% endif %}
+                    </article>
+                    
+                    <h4><b>{{user.first_name}} {{user.last_name}}</b></h2>
+                    
                 </article>
-                
-                <h4><b>{{user.first_name}} {{user.last_name}}</b></h2>
-                
-            </article>
-        </section>
-        <br>
-        <section>
-            <h3>User courses:</h3>
-            <h4><a href="{% url 'add-course' %}">Create a course</a></h4>
-            {% for course in courses %}
-                <br>
-                <article class="course-container">
-                    <a href="{% url 'course-details' course.pk %}" class="course-link pointer">
-                        <div class="image-container">
-                            {% if course.cover %}
-                                <img src="{{ course.cover.url }}" class="course-cover">
-                            {% else %}
-                                <div class="course-cover box"></div>
-                            {% endif %}
-                            <div class="text-overlay">
-                                <h2>{{ course.name }}</h2>
-                                <h3>{{ course.user }}</h3>
+            </section>
+            <br>
+            <section>
+                <h3>User courses:</h3>
+                {% if request.user == user %}
+                <h4><a href="{% url 'add-course' %}">Create a course</a></h4>
+                {% endif %}
+                {% if courses %}
+                {% for course in courses %}
+                    <br>
+                    <article class="course-container">
+                        <a href="{% url 'course-details' course.pk %}" class="course-link pointer">
+                            <div class="image-container">
+                                {% if course.cover %}
+                                    <img src="{{ course.cover.url }}" class="course-cover">
+                                {% else %}
+                                    <div class="course-cover box"></div>
+                                {% endif %}
+                                <div class="text-overlay">
+                                    <h2>{{ course.name }}</h2>
+                                    <h3>{{ course.user }}</h3>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </article>
-            {% endfor %}
+                        </a>
+                    </article>
+                {% endfor %}
+                {% else %}
+                    <h3><i>User does not have any course yet...</i></h3>
+                {% endif %}
+            </section>
         </section>
-    </section>
+    </article>
 </article>
-
 {% endblock %}

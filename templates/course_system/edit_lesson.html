@@ -3,15 +3,34 @@
 {% block title %}Edit {{lesson.name}}{% endblock %}
 
 {% block content %}
-<form method="POST" enctype="multipart/form-data">
-	{% csrf_token %}
-	<label for="cover">Edit Lesson:</label>
-	<input type="file" id="cover" name="cover" class="form-control" value="{% if lesson.upload_data %}{{lesson.upload_data.url}}{% endif %}">
-	
-	<label for="name">Name:</label>
-	<input type="text" id="name" name="name" value="{{lesson.name}}">
+<article class="container">
+    <article class="row justify-content-center align-items-center">
+        <section class="col-lg-6 col-md-8 col-12 px-5">
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h1>Edit Lesson:</h1>
+                <section>
+                    <label for="name">Name:</label>
+                    <input type="text" required id="name"  name="name" class="form-control" value="{{lesson.name}}">
+                </section>
 
-	<button type="submit">Submit</button>
-</form>
+                <section>
+                    <label for="content">Content:</label>
+                    <input type="text" id="content"  name="content" class="form-control" value="{{lesson.content}}">
+                </section>
 
+                <section>
+                    <label for="date_to">Date to:</label>
+                    <input type="datetime-local"  id="date_to"  name="date_to" class="form-control" value="{{lesson.date_to}}">
+                </section>
+                
+                <section>
+                    <label for="upload_data">Upload_data:</label>
+                    <input type="file" id="upload_data" name="upload_data" class="form-control" value="{% if lesson.upload_data %}{{lesson.upload_data.url}}{% endif %}">
+                </section>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </section>
+    </article>
+</article>
 {% endblock %}

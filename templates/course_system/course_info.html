@@ -3,32 +3,43 @@
 {% block title %}{{course.name}}{% endblock %}
 
 {% block content %}
-<br>
-<h1>Course info</h1>
-{% if course.user == request.user %}
-	<a href="{% url 'course-delete'  course.pk %}">Delete course</a>
-{% endif %}
-<br>
-<article class="course-container">
-	{% if course.cover %}
-		<img src="{{ course.cover.url }}" class="course-cover" style="width: 100%; height:300px">
-	{% else %}
-		<div class="course-cover box"></div>
-	{% endif %}
-	<article>
-		<h2>{{ course.name }}</h2>
-		<h3><a href="{% url 'user-info' course.user.pk %}">{{ course.user }}</a></h3>
-		<h4>Code: {{course.code}}</h4>
+<article class="container mt-3">
+	<article class="course-container">
+		<figure class="course-cover-container noselect">
+			{% if course.cover %}
+				<img src="{{ course.cover.url }}" class="main-course-cover">
+			{% else %}
+				<div class="course-cover box"></div>
+			{% endif %}
+			<figcaption class="course-caption d-flex flex-column text-light">
+				<b>{{ course.name }}</b>
+				<a href="{% url 'user-info' course.user.pk %}" class="text-light fs-4">{{ course.user }}</a>
+			</figcaption>
+			<a href="{% url 'edit-course' course.pk %}" class="course-edit text-light">Edit <span class="material-symbols-outlined pointer">edit</span></a>
+		</figure>
+		
+		<article>
+			
+			<h4>Code: {{course.code}}</h4>
+			{% if course.user == request.user %}
+				<a href="{% url 'add-lesson' course.pk %}">Add Lesson<span class="material-symbols-outlined">add_box</span><span class="sidebar-text"></span></a>
+			{% endif %}
+		</article>
+		<br>
 		{% if course.user == request.user %}
-			<a href="{% url 'edit-course' course.pk %}">Edit <span class="material-symbols-outlined pointer">edit</span></a>
+			<a href="{% url 'course-delete'  course.pk %}">Delete course</a>
+			<br>
+			
+		{% endif %}
+		<br>
+		{% if lessons %}
+			{% for lesson in lessons %}
+				<br>
+				<h3><a href="{% url 'lesson-details' lesson.course.pk lesson.pk %}">{{lesson.name}}</a></h3>
+			{% endfor %}
+		{% else %}
+			<h3><i>There are no lessons yet...</i></h3>
 		{% endif %}
 	</article>
-	{% if course.user == request.user %}
-		<a href="{% url 'add-lesson' course.pk %}">Add Lesson<span class="material-symbols-outlined">add_box</span><span class="sidebar-text"></span></a>
-	{% endif %}
-		{% for lesson in lessons %}
-	<br>
-	<h3><a href="{% url 'lesson-details' lesson.course.pk lesson.pk %}">{{lesson.name}}</a></h3>
-	{% endfor %}
 </article>
 {% endblock %}
