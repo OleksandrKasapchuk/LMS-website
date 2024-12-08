@@ -18,28 +18,34 @@
 			<a href="{% url 'edit-course' course.pk %}" class="course-edit text-light">Edit <span class="material-symbols-outlined pointer">edit</span></a>
 		</figure>
 		
-		<article>
+		<article class="d-flex gap-3">
+			<section class="d-flex flex-column code-container">
+				<h4>Code:</h4> 
+				<b class="fs-3">{{course.code}}</b>
+			</section>
+			<section class="lesson-grid">
+				{% if course.user == request.user %}
+					<a class="add-lesson-btn" href="{% url 'add-lesson' course.pk %}">
+						Add Lesson
+						<span class="material-symbols-outlined">add_box</span>
+					</a>
+				{% endif %}
 			
-			<h4>Code: {{course.code}}</h4>
-			{% if course.user == request.user %}
-				<a href="{% url 'add-lesson' course.pk %}">Add Lesson<span class="material-symbols-outlined">add_box</span><span class="sidebar-text"></span></a>
-			{% endif %}
+				{% if lessons %}
+					{% for lesson in lessons %}
+					<article class="lesson-card">
+						<div class="lesson-header">
+							<h3><a href="{% url 'lesson-details' lesson.course.pk lesson.pk %}">{{lesson.course.user}} published "{{ lesson.name|truncatewords:50 }}"</a></h3>
+							<p class="lesson-date">{{ lesson.date_to|date:"F j, Y" }}</p>
+						</div>
+					</article>
+					{% endfor %}
+				{% else %}
+					<h3 class="no-lessons"><i>There are no lessons yet...</i></h3>
+				{% endif %}
+			</section>
+			
 		</article>
-		<br>
-		{% if course.user == request.user %}
-			<a href="{% url 'course-delete'  course.pk %}">Delete course</a>
-			<br>
-			
-		{% endif %}
-		<br>
-		{% if lessons %}
-			{% for lesson in lessons %}
-				<br>
-				<h3><a href="{% url 'lesson-details' lesson.course.pk lesson.pk %}">{{lesson.name}}</a></h3>
-			{% endfor %}
-		{% else %}
-			<h3><i>There are no lessons yet...</i></h3>
-		{% endif %}
 	</article>
 </article>
 {% endblock %}

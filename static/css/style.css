@@ -39,7 +39,10 @@ a {
     position: relative;
     display: inline-block;
 }
-
+.course-in-list-container {
+	width: 400px;
+    height: 200px;
+}
 .course-cover {
     width: 400px;
     height: 200px;
@@ -112,4 +115,81 @@ a {
 	background-color: rgba(0, 0, 0,0.3);
 	border-radius: 10px;
 	padding: 10px;
+}
+
+.code-container {
+	border: 1px solid black;
+	border-radius: 10px;
+	padding: 15px;
+	width: 200px;
+	height: 125px;
+}
+
+/* Контейнер для уроків */
+.lesson-grid {
+    display: flex;
+	flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+	width: 100%;
+}
+
+/* Картка уроку */
+.lesson-card {
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+	width: 100%;
+}
+
+.lesson-card:hover, .course-in-list-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Заголовок уроку */
+.lesson-header h3 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.lesson-header .lesson-date {
+    font-size: 0.9em;
+    color: #888;
+}
+
+/* Опис уроку */
+.lesson-description {
+    margin-top: 10px;
+    font-size: 0.95em;
+    color: #555;
+}
+
+/* Кнопка додавання уроку */
+.add-lesson-btn {
+    display: inline-block;
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 15px;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.add-lesson-btn:hover {
+    background-color: #45a049;
+}
+
+.no-lessons {
+    text-align: center;
+    color: #777;
+    font-size: 1.1em;
 }

@@ -10,7 +10,7 @@
     </header>
     
     {% for course in courses %}
-        <article>
+        <article class="course-in-list-container">
             <a href="{% url 'course-details' course.pk %}" class="course-link pointer">
                 <div class="image-container">
                     {% if course.cover %}
