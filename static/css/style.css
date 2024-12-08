@@ -193,3 +193,72 @@ a {
     color: #777;
     font-size: 1.1em;
 }
+
+.lesson-main {
+	width: 80%;
+}
+
+/* Загальний стиль секції коментарів */
+.comments-section {
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+/* Список коментарів */
+.comments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+	overflow-y:scroll;
+	height: 300px;
+}
+
+.comments-list::-webkit-scrollbar {
+    display: none; /* Chrome, Safari та інші браузери на базі WebKit */
+}
+
+.comment-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.comment-author {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #007bff;
+    margin-bottom: 5px;
+}
+
+.comment-content {
+    font-size: 1rem;
+    color: #333;
+}
+
+/* Додавання коментаря */
+.add-comment {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.comment-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.send-btn {
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.send-btn:hover {
+    background-color: #0056b3;
+}

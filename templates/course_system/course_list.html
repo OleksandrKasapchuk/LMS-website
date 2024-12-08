@@ -4,12 +4,14 @@
 
 {% block content %}
 <article class="container mt-3">
+
     <header class="d-flex gap-3 mb-3">
         <span onclick="filterCourses('joined')" class="pointer {% if category == 'joined' %}my-active {% else %} gray-text {% endif %}">Joined</span>
         <span onclick="filterCourses('own')" class="pointer {% if category == 'own' %}my-active {% else %} gray-text {% endif %}">Own</span>
     </header>
     
     {% for course in courses %}
+    <br>
         <article class="course-in-list-container">
             <a href="{% url 'course-details' course.pk %}" class="course-link pointer">
                 <div class="image-container">
@@ -27,6 +29,7 @@
         </article>
     {% endfor %}
 </article>
+
 <script>
 	function filterCourses(category) {
         window.location.href = `?category=${category}`;

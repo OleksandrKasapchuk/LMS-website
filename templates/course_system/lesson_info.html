@@ -5,11 +5,11 @@
 {% block content %}
 {% load custom_tags %}
 <br>
-<article class="d-flex">
-    <section class="d-flex flex-column">
+<article class="d-flex container">
+    <section class="d-flex flex-column lesson-main">
         <h1>{{ lesson.name }} </h1>{% if lesson.edited %} <i>(Edited)</i> <br>{% endif %}
         {% if lesson.date_to %}
-        <h3>To {{lesson.date_to}}</h3>
+        <h3>Due: {{lesson.date_to}}</h3>
         {% endif %}
         {% if request.user == lesson.course.user %}
             <a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}">Delete lesson</a>
@@ -23,7 +23,7 @@
         <p>{{lesson.content}}</p>
         {% if lesson.upload_data %}
             {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
-                <a href="{{ lesson.upload_data.url}}" target="_blank"><img src="{{lesson.upload_data.url}}"  style="max-width: 500px;"></a>
+                <a href="{{ lesson.upload_data.url}}" target="_blank"><img src="{{lesson.upload_data.url}}"  style="max-width: 300px;"></a>
             {% elif lesson.upload_data.url|endswith:".mp4" %}
                 <video controls>
                     <source src="{{ lesson.upload_data.url}}" type="mp4/video">
@@ -39,19 +39,25 @@
         {% endif %}
     </section>
     <br>
-    <section>
-        <ul id="comments" class="comments">
+    <section class="comments-section">
+        <ul id="comments" class="comments-list">
             {% for comment in lesson.comments.all %}
-                <li id="comment-{{ comment.pk }}" class="comment-container mt-3 d-flex">
-                    <section class="d-flex flex-column">
-                        <section class="d-flex">
-                            <p><a href="{% url 'user-info' comment.user.pk %}"><b>{{ comment.user }}</b></a> {{comment.content}}</p>
-                        </section>					
-                    </section>
-                </li>
+            <li id="comment-{{ comment.pk }}" class="comment-item">
+                <p class="comment-author">
+                    <a href="{% url 'user-info' comment.user.pk %}">
+                        <b>{{ comment.user }}</b>
+                    </a>
+                    {{comment.date_published.time}}
+                </p>
+                <p class="comment-content">{{ comment.content }}</p>
+            </li>
             {% endfor %}
         </ul>
-        <section class="msg-input d-flex"><input id="message-content" placeholder="Add a comment..."><span class="material-symbols-outlined pointer p-3 pt-2" onclick="SendComment({{ lesson.course.pk }}, {{ lesson.pk }})">Send</span></section>
+    
+        <section class="add-comment">
+            <input id="message-content" placeholder="Add a comment..." class="comment-input">
+            <button class="send-btn" onclick="SendComment({{ lesson.course.pk }}, {{ lesson.pk }})">Send</button>
+        </section>
     </section>
     </section>
         {% if request.user != lesson.course.user %}
@@ -62,7 +68,7 @@
     
                     <p>Uploaded file: 
                         {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
-    					    <a href="{{ user_answer.upload_data.url}}" target="_blank"><img src="{{user_answer.upload_data.url}}"  style="max-width: 500px;"></a>
+    					    <a href="{{ user_answer.upload_data.url}}" target="_blank"><img src="{{user_answer.upload_data.url}}"  style="max-width: 200px;"></a>
     				    {% elif lesson.upload_data.url|endswith:".mp4" %}
                             <video controls>
                                 <source src="{{ user_answer.upload_data.url}}" type="mp4/video">
@@ -75,7 +81,7 @@
                             <br>
                             <a href="{{ user_answer.upload_data.url}}">Download file</a>
     				    {% endif %}
-                    <p>Uploaded on: {{ user_answer.date_published }}</p>
+                    <p>Uploaded on: <br>{{ user_answer.date_published }}</p>
                     <!-- Кнопка повернення -->
                     <form method="POST" action="{% url 'return-answer' lesson.course.pk lesson.pk %}" class="mt-3">
                         {% csrf_token %}
@@ -106,7 +112,7 @@
     formData.append('content', content);
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
 
-    fetch(`/courses/${courseId}/${lessonId}`, { // Оновлено URL
+    fetch(`/${courseId}/${lessonId}`, { // Оновлено URL
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',

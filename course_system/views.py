@@ -218,7 +218,7 @@ class AddAnswerView(LoginRequiredMixin,View):
                 upload_data=request.FILES.get('data')
             )
 
-        return redirect(f"{lesson.course.pk}/{lesson.pk}")
+        return redirect(f"/{lesson.course.pk}/{lesson.pk}")
 
 
 class AnswerReturnView(LoginRequiredMixin, View):
@@ -231,6 +231,6 @@ class AnswerReturnView(LoginRequiredMixin, View):
 
         if answer:
             answer.delete()  # Видаляємо відповідь
-            return JsonResponse({'success': True, 'message': 'Робота повернена успішно.'})
+            return redirect(f'/{lesson.course.pk}/{lesson.pk}')
         else:
             return JsonResponse({'success': False, 'message': 'Робота не знайдена.'}, status=404)
