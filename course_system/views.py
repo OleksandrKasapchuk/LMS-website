@@ -72,7 +72,7 @@ class CourseUpdateView(LoginRequiredMixin, UserIsOwnerMixin, UpdateView):
 		if request.FILES.get('cover') != None:
 			course.cover = request.FILES.get('cover')
 		course.save()
-		return redirect(f"{course.pk}")
+		return redirect(f"/{course.pk}")
 
 
 class LessonCreateView(LoginRequiredMixin, View):
@@ -180,7 +180,7 @@ class LessonUpdateView(LoginRequiredMixin, LessonUserIsOwnerMixin, UpdateView):
 		if request.FILES.get('upload_data') != None:
 			lesson.upload_data = request.FILES.get('upload_data')
 		lesson.save()
-		return redirect(f"{lesson.course.pk}/{pk}")
+		return redirect(f"/{lesson.course.pk}/{pk}")
 
 
 class SubscriptionView(LoginRequiredMixin, View):

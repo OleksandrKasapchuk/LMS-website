@@ -40,14 +40,14 @@
     </section>
     <br>
     <section class="comments-section">
-        <ul id="comments" class="comments-list">
+        <ul id="comments" class="comments-list position-relative">
             {% for comment in lesson.comments.all %}
-            <li id="comment-{{ comment.pk }}" class="comment-item">
+            <li class="comment-item">
                 <p class="comment-author">
                     <a href="{% url 'user-info' comment.user.pk %}">
                         <b>{{ comment.user }}</b>
                     </a>
-                    {{comment.date_published.time}}
+                    {{comment.date_published}}
                 </p>
                 <p class="comment-content">{{ comment.content }}</p>
             </li>
@@ -129,13 +129,15 @@
         if (data.success) {
             const lessonComments = document.getElementById('comments');
             const newComment = document.createElement('li');
-            newComment.classList.add('comment-container', 'mt-3', 'd-flex');
+            newComment.classList.add('comment-item');
             newComment.innerHTML = `
-                <section class="d-flex flex-column">
-                    <section class="d-flex">
-                        <p><a href="${data.user_url}"><b>${data.username}</b></a> ${data.content}</p>
-                    </section>
-                </section>
+                <p class="comment-author">
+                    <a href="${data.user_url}">
+                        <b>${data.username}</b>
+                    </a>
+                    ${data.date_published}
+                </p>
+                <p class="comment-content">${data.content}</p>
             `;
             lessonComments.appendChild(newComment);
             document.getElementById('message-content').value = '';

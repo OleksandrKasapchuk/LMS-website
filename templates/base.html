@@ -21,25 +21,29 @@
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNav">
-				<ul class="navbar-nav">
+				<ul class="navbar-nav ms-auto d-flex align-items-center">
 					{% if request.user.is_authenticated %}
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="{% url 'user-info' request.user.pk %}">Profile</a>
+					<li class="nav-item dropdown me-3">
+						<a class="nav-link dropdown-toggle active d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<span class="material-symbols-outlined">add</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a class="dropdown-item" href="{% url 'add-course' %}">Create a course</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="{% url 'join-course' %}">Join a course</a>
+							</li>
+						</ul>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Logout</a>
+						<a class="nav-link active" aria-current="page" href="{% url 'user-info' request.user.pk %}"><img src="{{request.user.avatar.url}}" alt="Profile photo" class="rounded-circle" style="width: 35px;height: 35px;"></a>
 					</li>
 					{% else %}
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="{% url 'login' %}">Login</a>
 					</li>
 					{% endif %}
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="{% url 'add-course' %}">Create a course</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="{% url 'join-course' %}">Join a course</a>
-					</li>
 				</ul>
 			</div>
 		</div>
@@ -60,9 +64,39 @@
         {% endif %}
 		{% endfor %}
 	{% endif %}
-	<main>
-		{% block content %}
-		{% endblock %}
-	</main>
+	<div class="d-flex" style="height: 94vh; ">
+		<!-- Sidebar -->
+		<aside class="col-md-2 bg-light border-end px-3">
+			<h5>My Courses</h5>
+			<ul class="list-group">
+				{% for course in user_courses %}
+				<li class="list-group-item">
+					<a href="{% url 'course-details' course.pk %}">{{ course.name }}</a>
+				</li>
+				<br>
+				{% empty %}
+				<li class="list-group-item text-muted">No courses available.</li>
+				{% endfor %}
+			</ul>
+			<hr>
+			<h5>Joined Courses:</h5>
+			<ul class="list-group">
+				{% for course in joined_courses %}
+				<li class="list-group-item">
+					<a href="{% url 'course-details' course.pk %}">{{ course.name }}</a>
+				</li>
+				<br>
+				{% empty %}
+				<li class="list-group-item text-muted">No courses available.</li>
+				{% endfor %}
+			</ul>
+
+		</aside>
+		<!-- Main content -->
+		<main class="col-md-10">
+			{% block content %}
+			{% endblock %}
+		</main>
+	</div>
 </body>
 </html>
