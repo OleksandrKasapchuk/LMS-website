@@ -9,7 +9,7 @@
         <span onclick="filterCourses('joined')" class="pointer {% if category == 'joined' %}my-active {% else %} gray-text {% endif %}">Joined</span>
         <span onclick="filterCourses('own')" class="pointer {% if category == 'own' %}my-active {% else %} gray-text {% endif %}">Own</span>
     </header>
-    
+    <hr>
     <article class="d-flex gap-3">
         {% for course in courses %}
             <article class="course-container">

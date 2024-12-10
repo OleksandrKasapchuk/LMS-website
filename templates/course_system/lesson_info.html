@@ -5,18 +5,38 @@
 {% block content %}
 {% load custom_tags %}
 <br>
-<article class="d-flex container">
+<article class="d-flex container gap">
     <section class="d-flex flex-column lesson-main">
-        <h1>{{ lesson.name }} </h1>{% if lesson.edited %} <i>(Edited)</i> <br>{% endif %}
-        {% if lesson.date_to %}
-        <h3>Due: {{lesson.date_to}}</h3>
-        {% endif %}
-        {% if request.user == lesson.course.user %}
-            <a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}">Delete lesson</a>
-            <br>
-            <a href="{% url 'lesson-edit' lesson.course.pk lesson.pk %}">Edit lesson</a>
-        {% endif %}
-        <h3><a href="{% url 'user-info' lesson.course.user.pk %}">{{ lesson.course.user }}</a></h3> 
+        <section class="d-flex justify-content-between">
+            <h1>{{ lesson.name }}  </h1>
+    
+            {% if request.user == lesson.course.user %}
+                        
+                    </li>
+                    <li>
+                        
+                    </li>
+                </ul>
+            </li>
+            </ul>
+            <div class="dropdown">
+                <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="material-symbols-outlined">more_vert</span>
+                </button>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                    <li><a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}" class="dropdown-item">Delete lesson</a></li>
+                    <li><a href="{% url 'lesson-edit' lesson.course.pk lesson.pk %}" class="dropdown-item">Edit lesson</a></a></li>
+                </ul>
+            </div>
+            {% endif %}
+        </section>
+
+        {% if lesson.edited %} <i>(Edited)</i> <br>{% endif %}
+ 
+        <h5 class="text-muted">{{ lesson.course.user }}</h5> 
+        <h5 class="lesson-info-date">Due: {% if lesson.date_to %} {{lesson.date_to}} {% else %} no date {% endif %}</h5>
+        
+        
     
     <hr>
     <section>
@@ -38,7 +58,7 @@
             {% endif %}
         {% endif %}
     </section>
-    <br>
+    <hr>
     <section class="comments-section">
         <ul id="comments" class="comments-list position-relative">
             {% for comment in lesson.comments.all %}

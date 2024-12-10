@@ -1,6 +1,7 @@
 * {
 	margin: 0;
 	padding: 0;
+    /* border: black dotted 1px ; */
 }
 
 body {
@@ -13,6 +14,9 @@ a {
 	text-decoration: none;
 	color: black;
 }
+li {
+    list-style: none !important;
+}
 .avatar {
     border: white solid 2px;
     border-radius: 100px;
@@ -24,6 +28,7 @@ a {
 .noselect {
 	user-select: none;
 }
+
 .gap {
 	gap: 25px;
 }
@@ -38,18 +43,22 @@ a {
     position: relative;
     display: inline-block;
 }
+
 .course-container {
 	width: 400px;
     height: 200px;
 }
+
 .course-cover {
     width: 400px;
     height: 200px;
     border-radius: 15px;
 }
+
 .box {
 	background-color: gray;
 }
+
 .course-link {
     text-decoration: none; 
     color: inherit; 
@@ -107,6 +116,7 @@ a {
     padding: 5px 10px; /* Внутрішні відступи */
     font-size: 36px; /* Розмір тексту */
 }
+
 .course-edit {
 	position: absolute;
 	right: 10px;
@@ -162,7 +172,9 @@ a {
     font-size: 0.9em;
     color: #888;
 }
-
+.lesson-info-date {
+    text-align:end;
+}
 /* Опис уроку */
 .lesson-description {
     margin-top: 10px;
@@ -257,7 +269,41 @@ a {
     border-radius: 4px;
     cursor: pointer;
 }
-
 .send-btn:hover {
     background-color: #0056b3;
+}
+
+.list-group-item {
+    padding: 0;
+}
+
+.sidebar-link {
+    display: block; /* Перетворює <a> на блоковий елемент */
+    width: 100%; /* Забезпечує, що посилання займає всю ширину батьківського елемента */
+    padding: 10px;
+}
+
+.custom-dropdown-menu {
+    top: 0;
+    left: auto !important; 
+    right: 0 !important; /* Зміщує список до лівого краю */
+    width: 250px; /* Можна змінити ширину списку */
+    /* transform: translate(0px,0px)!important; */
+    animation: slideDown 0.3s ease-in-out;
+}
+
+.custom-dropdown-menu a {
+    padding: 15px;
+    font-size: 24px;
+}
+
+/* Анімація для плавного відкриття */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+
+    }
+    to {
+        opacity: 1;
+    }
 }

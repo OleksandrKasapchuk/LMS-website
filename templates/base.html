@@ -24,10 +24,10 @@
 				<ul class="navbar-nav ms-auto d-flex align-items-center">
 					{% if request.user.is_authenticated %}
 					<li class="nav-item dropdown me-3">
-						<a class="nav-link dropdown-toggle active d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<a class="nav-link active d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							<span class="material-symbols-outlined">add</span>
 						</a>
-						<ul class="dropdown-menu">
+						<ul class="dropdown-menu custom-dropdown-menu">
 							<li>
 								<a class="dropdown-item" href="{% url 'add-course' %}">Create a course</a>
 							</li>
@@ -71,7 +71,7 @@
 			<ul class="list-group">
 				{% for course in user_courses %}
 				<li class="list-group-item">
-					<a href="{% url 'course-details' course.pk %}">{{ course.name }}</a>
+					<a href="{% url 'course-details' course.pk %}" class="sidebar-link">{{ course.name }}</a>
 				</li>
 				<br>
 				{% empty %}
@@ -83,7 +83,7 @@
 			<ul class="list-group">
 				{% for course in joined_courses %}
 				<li class="list-group-item">
-					<a href="{% url 'course-details' course.pk %}">{{ course.name }}</a>
+					<a href="{% url 'course-details' course.pk %}" class="sidebar-link">{{ course.name }}</a>
 				</li>
 				<br>
 				{% empty %}

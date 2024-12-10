@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import *
 from course_system.models import Course
+from django.core.exceptions import PermissionDenied
 
 
 def register_user(request):
@@ -59,11 +60,14 @@ def logout_user(request):
 def user_info(request, pk):
     try:
         user = CustomUser.objects.get(id=pk)
-        context = {
-            'user': user,
-            "courses": Course.objects.filter(user=user),
-        }
-        return render(request, 'auth_system/user_info.html', context=context)
+        if request.user == user:
+            context = {
+                'user': user,
+                "courses": Course.objects.filter(user=user),
+            }
+            return render(request, 'auth_system/user_info.html', context=context)
+        else:
+            raise PermissionDenied
 
     except CustomUser.DoesNotExist:
         return HttpResponse (
