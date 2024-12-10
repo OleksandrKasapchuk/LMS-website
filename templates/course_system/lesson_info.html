@@ -11,33 +11,22 @@
             <h1>{{ lesson.name }}  </h1>
     
             {% if request.user == lesson.course.user %}
-                        
-                    </li>
-                    <li>
-                        
-                    </li>
-                </ul>
-            </li>
-            </ul>
             <div class="dropdown">
                 <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="material-symbols-outlined">more_vert</span>
                 </button>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                    <li><a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}" class="dropdown-item">Delete lesson</a></li>
                     <li><a href="{% url 'lesson-edit' lesson.course.pk lesson.pk %}" class="dropdown-item">Edit lesson</a></a></li>
+                    <li><a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}" class="dropdown-item">Delete lesson</a></li>
                 </ul>
             </div>
             {% endif %}
         </section>
 
-        {% if lesson.edited %} <i>(Edited)</i> <br>{% endif %}
+        {% if lesson.edited %} <i>(Edited)</i>{% endif %}
  
         <h5 class="text-muted">{{ lesson.course.user }}</h5> 
         <h5 class="lesson-info-date">Due: {% if lesson.date_to %} {{lesson.date_to}} {% else %} no date {% endif %}</h5>
-        
-        
-    
     <hr>
     <section>
         <p>{{lesson.content}}</p>
@@ -80,16 +69,16 @@
         </section>
     </section>
     </section>
-        {% if request.user != lesson.course.user %}
-            <section>
+    {% if request.user != lesson.course.user %}
+        <section class="answer-container">
+            <article class="p-3">
+                <h4>Your answer</h4>
                 {% if user_has_answered %}
-                    <!-- Якщо користувач уже здав роботу -->
-                    <div class="alert alert-success">You have uploaded already!</div>
     
                     <p>Uploaded file: 
                         {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
-    					    <a href="{{ user_answer.upload_data.url}}" target="_blank"><img src="{{user_answer.upload_data.url}}"  style="max-width: 200px;"></a>
-    				    {% elif lesson.upload_data.url|endswith:".mp4" %}
+                            <a href="{{ user_answer.upload_data.url}}" target="_blank"><img src="{{user_answer.upload_data.url}}"  style="max-width: 200px;"></a>
+                        {% elif lesson.upload_data.url|endswith:".mp4" %}
                             <video controls>
                                 <source src="{{ user_answer.upload_data.url}}" type="mp4/video">
                                 Your browser does not support video tag
@@ -100,7 +89,7 @@
                             <a href="{{ user_answer.upload_data.url}}" target="_blank">Open file</a>
                             <br>
                             <a href="{{ user_answer.upload_data.url}}">Download file</a>
-    				    {% endif %}
+                        {% endif %}
                     <p>Uploaded on: <br>{{ user_answer.date_published }}</p>
                     <!-- Кнопка повернення -->
                     <form method="POST" action="{% url 'return-answer' lesson.course.pk lesson.pk %}" class="mt-3">
@@ -116,9 +105,10 @@
                         <button type="submit" class="btn btn-primary">Send</button>
                     </form>
                 {% endif %}
-            </section>
-            
-        {% endif %}
+            </article>
+        </section>
+        
+    {% endif %}
 </article>
 <script>
 	function SendComment(courseId, lessonId) {
