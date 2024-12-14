@@ -29,9 +29,9 @@ def custom_date_format(value):
     start_of_week = now - datetime.timedelta(days=now.weekday())  # Понеділок поточного тижня
     if value.date() >= start_of_week.date():
         return value.strftime("%A, %H:%M")  # Назва дня тижня
-	
-    if value.year() != now.year():
-        return value.strftime("%F")
+    
+    if value.year != now.year:
+        return value.strftime("%Y-%m-%d")
     
     # В іншому випадку
     return value.strftime("%b. %d")  # День і місяць

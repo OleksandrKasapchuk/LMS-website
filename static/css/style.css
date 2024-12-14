@@ -311,3 +311,17 @@ li {
     height: fit-content;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
+
+/* Стиль, щоб не було видимих "помилок" при завантаженні сторінки */
+body.sidebar-loaded #sidebar {
+    transition: none;
+}
+
+/* Плавна анімація для сайдбара */
+#sidebar {
+    transition: all 0.3s ease-in-out;
+}
+
+.hidden {
+    display: none;
+}

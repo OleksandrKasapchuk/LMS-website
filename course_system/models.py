@@ -86,6 +86,7 @@ class Answer(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name="answers")
     upload_data = models.FileField(upload_to="answer_media")
     date_published = models.DateTimeField(auto_now_add=True)
+    mark = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.user} - {self.lesson} - {self.date_published}"

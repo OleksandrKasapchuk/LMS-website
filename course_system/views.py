@@ -135,10 +135,15 @@ class LessonDetailView(DetailView):
 		user = self.request.user
 
 		# Перевіряємо, чи користувач здав роботу
-		context['user_has_answered'] = lesson.answers.filter(user=user).exists()
+		user_answer = lesson.answers.filter(user=user).first()
+		context['user_has_answered'] = user_answer is not None
 
-		# Додаємо відповідь користувача, якщо є
-		context['user_answer'] = lesson.answers.filter(user=user).first()
+		if user_answer:
+			# Додаємо відповідь користувача
+			context['user_answer'] = user_answer
+
+			# Додаємо оцінку за відповідь, якщо вона є
+			context['mark'] = user_answer.mark
 
 		return context
 

@@ -16,6 +16,7 @@
 <body>
 	<nav class="navbar navbar-expand-lg bg-body-tertiary bg-primary">
 		<div class="container-fluid">
+			<h2 onclick=toggleSidebar() class="me-3"><span class="material-symbols-outlined pointer">menu</span></h2>
 			<a class="navbar-brand" href="{% url 'index' %}">LMS</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -64,9 +65,8 @@
         {% endif %}
 		{% endfor %}
 	{% endif %}
-	<div class="d-flex" style="height: 94vh; ">
-		<!-- Sidebar -->
-		<aside class="col-md-2 bg-light border-end px-3">
+	<div class="d-flex" style="height: 94vh;">
+		<aside class="col-md-2 bg-light border-end px-3" id="sidebar">
 			<h5>My Courses</h5>
 			<ul class="list-group">
 				{% for course in user_courses %}
@@ -98,5 +98,29 @@
 			{% endblock %}
 		</main>
 	</div>
+	<script>
+		// Перевіряємо наявність стану сайдбара в localStorage і застосовуємо відповідний стиль
+		window.addEventListener('load', () => {
+			const sidebar = document.getElementById('sidebar');
+			if (localStorage.getItem('sidebarVisible') === 'false') {
+				sidebar.classList.add('hidden');
+			}
+		});
+
+		// Функція для перемикання видимості сайдбара
+		function toggleSidebar() {
+			const sidebar = document.getElementById('sidebar');
+			const isHidden = sidebar.classList.contains('hidden');
+			
+			if (isHidden) {
+				sidebar.classList.remove('hidden');
+				localStorage.setItem('sidebarVisible', 'true'); // Зберігаємо стан
+			} else {
+				sidebar.classList.add('hidden');
+				localStorage.setItem('sidebarVisible', 'false'); // Зберігаємо стан
+			}
+		}
+
+	</script>
 </body>
 </html>
