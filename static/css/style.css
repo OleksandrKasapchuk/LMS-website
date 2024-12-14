@@ -288,7 +288,7 @@ li {
     left: auto !important; 
     right: 0 !important;
     width: 250px;
-    animation: slideDown 0.3s ease-in-out;
+    animation: slideDown 0.2s ease-in-out;
 }
 
 .custom-dropdown-menu a {
@@ -296,7 +296,6 @@ li {
     font-size: 24px;
 }
 
-/* Анімація для плавного відкриття */
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -308,8 +307,7 @@ li {
 }
 
 .answer-container {
-    /* border: 2px solid black; */
     border-radius: 20px;
     height: fit-content;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }

@@ -4,6 +4,7 @@ from django.utils.timezone import now
 import random
 import string
 
+
 class Course(models.Model):
     name = models.CharField(max_length=100)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -14,7 +15,7 @@ class Course(models.Model):
         return f"{self.name} - {self.user}"
 
     def save(self, *args, **kwargs):
-        if not self.code:  # Генеруємо код лише, якщо його ще немає
+        if not self.code:  # Генерує код лише, якщо його ще немає
             self.code = self._generate_unique_code()
         super().save(*args, **kwargs)
 
@@ -31,10 +32,13 @@ class Lesson(models.Model):
     content = models.TextField()
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     upload_data = models.FileField(upload_to="lesson_media", null=True, blank=True)
+
+    date_published = models.DateTimeField(auto_now_add=True)
     date_to = models.DateTimeField(blank=True, null=True)
+
     edited = models.BooleanField(default=False)  # Поле для відстеження редагування
     last_edited_at = models.DateTimeField(null=True, blank=True)  # Дата останнього редагування
-
+    
     def save(self, *args, **kwargs):
         # Перевіряємо, чи це оновлення існуючого об'єкта
         if self.pk is not None:
@@ -85,13 +89,3 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.lesson} - {self.date_published}"
-
-# class Like(models.Model):
-# 	user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="likes")
-# 	post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
-
-# 	class Meta:
-# 		unique_together = ('user', 'post')
-
-# 	def __str__(self):
-# 		return f"{self.user} - {self.post}"

@@ -23,10 +23,9 @@
             {% endif %}
         </section>
 
-        {% if lesson.edited %} <i>(Edited)</i>{% endif %}
- 
-        <h5 class="text-muted">{{ lesson.course.user }}</h5> 
-        <h5 class="lesson-info-date">Due: {% if lesson.date_to %} {{lesson.date_to}} {% else %} no date {% endif %}</h5>
+        <h5 class="text-muted">{{ lesson.course.user }} {{ lesson.date_published|custom_date_format }} {% if lesson.edited %} (Edited {{lesson.last_edited_at|custom_date_format}}) {% endif %}</h5>
+
+        <h5 class="lesson-info-date">Due: {% if lesson.date_to %} {{lesson.date_to|custom_date_format}} {% else %} no date {% endif %}</h5>
     <hr>
     <section>
         <p>{{lesson.content}}</p>
@@ -56,7 +55,7 @@
                     <a href="{% url 'user-info' comment.user.pk %}">
                         <b>{{ comment.user }}</b>
                     </a>
-                    {{comment.date_published}}
+                    {{ comment.date_published|custom_date_format }}
                 </p>
                 <p class="comment-content">{{ comment.content }}</p>
             </li>
