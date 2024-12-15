@@ -4,7 +4,7 @@
 
 {% block content %}
 <article class="container">
-    <article class="row justify-content-center align-items-center">
+    <article class="row justify-content-center">
         <section class="col-lg-6 col-md-8 col-12 px-5">
             <form method="POST" action="{% url 'login' %}">
                 <h1>Login</h1>
@@ -19,7 +19,7 @@
                     <input type="password" required id="password" name="password" class="form-control">
                 </section>
                 <button type="submit" class="btn btn-primary">Submit</button>
-                <a href="{% url 'register' %}" >Do not have any account?</a>
+                <a href="{% url 'register' %}">Do not have any account?</a>
             </form>
         </section>
     </article>

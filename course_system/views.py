@@ -17,16 +17,17 @@ class CourseView(ListView):
 		context = super().get_context_data(**kwargs)
 
 		category = self.request.GET.get('category', 'joined')
+		
+		if self.request.user.is_authenticated:
+			if category == 'joined':
+				# Отримуємо курси, на які підписаний користувач
+				subscribed_courses = Subscription.objects.filter(user=self.request.user).values_list('course', flat=True)
+				context['courses'] = Course.objects.filter(id__in=subscribed_courses)
+			else:
+				# Отримуємо курси, створені користувачем
+				context['courses'] = Course.objects.filter(user=self.request.user)
 
-		if category == 'joined' and self.request.user.is_authenticated:
-			# Отримуємо курси, на які підписаний користувач
-			subscribed_courses = Subscription.objects.filter(user=self.request.user).values_list('course', flat=True)
-			context['courses'] = Course.objects.filter(id__in=subscribed_courses)
-		else:
-			# Отримуємо курси, створені користувачем
-			context['courses'] = Course.objects.filter(user=self.request.user)
-
-		context['category'] = category
+			context['category'] = category
 		return context
 
 
@@ -135,15 +136,15 @@ class LessonDetailView(DetailView):
 		user = self.request.user
 
 		# Перевіряємо, чи користувач здав роботу
-		user_answer = lesson.answers.filter(user=user).first()
-		context['user_has_answered'] = user_answer is not None
+		user_answers = lesson.answers.filter(user=user)
+		context['user_has_answered'] = user_answers is not None
 
-		if user_answer:
+		if user_answers:
 			# Додаємо відповідь користувача
-			context['user_answer'] = user_answer
+			context['user_answer'] = user_answers
 
 			# Додаємо оцінку за відповідь, якщо вона є
-			context['mark'] = user_answer.mark
+			context['mark'] = user_answers.mark
 
 		return context
 
@@ -210,20 +211,42 @@ class SubscriptionView(LoginRequiredMixin, View):
 
 
 class AddAnswerView(LoginRequiredMixin,View):
-    def post(self, request, *args, **kwargs):
-        lesson = get_object_or_404(Lesson, pk=self.kwargs['pk'])
+    # def post(self, request, *args, **kwargs):
+    #     lesson = get_object_or_404(Lesson, pk=self.kwargs['pk'])
         
-        # Перевіряємо, чи вже є відповідь від цього користувача
-        answer = Answer.objects.filter(user=request.user, lesson=lesson).first()
+    #     # Перевіряємо, чи вже є відповідь від цього користувача
+    #     answer = Answer.objects.filter(user=request.user, lesson=lesson).first()
         
-        if not answer:  # Якщо відповіді ще немає, створюємо нову
-            answer = Answer.objects.create(
-                user=request.user,
-                lesson=lesson,
-                upload_data=request.FILES.get('data')
-            )
+    #     if not answer:  # Якщо відповіді ще немає, створюємо нову
+    #         answer = Answer.objects.create(
+    #             user=request.user,
+    #             lesson=lesson,
+    #             upload_data=request.FILES.get('data')
+    #         )
 
-        return redirect(f"/{lesson.course.pk}/{lesson.pk}")
+    #     return redirect(f"/{lesson.course.pk}/{lesson.pk}")
+    def post(self, request, pk, *args, **kwargs):
+        lesson = get_object_or_404(Lesson, pk=pk)
+		
+        files = request.FILES.getlist('data')  # Отримання всіх файлів
+
+        try:
+            for file in files:
+                Answer.objects.create(
+					user=request.user,
+					lesson=lesson,
+					upload_data=file
+				)
+			
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': True})
+			
+            return redirect('lesson-details', pk=lesson.pk, course=lesson.course.pk)
+		
+        except Exception as e:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': str(e)})
+
 
 
 class AnswerReturnView(LoginRequiredMixin, View):

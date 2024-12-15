@@ -26,7 +26,8 @@ def register_user(request):
             new_user.save()
             user = authenticate(username=username, first_name=name, last_name=surname, email=email, password=password)
             login(request, user)
-
+            
+            messages.success(request, ("Login was successful"))
             return redirect("index")
         else:
             return render(request, "auth_system/register.html")
@@ -43,6 +44,7 @@ def login_user(request):
             
             if user is not None:
                 login(request, user)
+                messages.success(request, ("Login was successful"))
                 return redirect("index")
             else:
                 messages.error(request, ("There was an error logging in, try again!"))
@@ -54,7 +56,7 @@ def login_user(request):
 @login_required
 def logout_user(request):
     logout(request)
-    messages.success(request, ("You were logged out"))
+    messages.success(request, ("Logout was successful"))
     return redirect("index")
 
 def user_info(request, pk):

@@ -5,6 +5,7 @@
 {% block content %}
 <article class="container mt-3">
 
+    {% if request.user.is_authenticated %}
     <header class="d-flex gap-3 mb-3">
         <span onclick="filterCourses('joined')" class="pointer {% if category == 'joined' %}my-active {% else %} gray-text {% endif %}">Joined</span>
         <span onclick="filterCourses('own')" class="pointer {% if category == 'own' %}my-active {% else %} gray-text {% endif %}">Own</span>
@@ -29,6 +30,13 @@
             </article>
         {% endfor %}
     </article>
+    {% else %}
+    <article class="d-flex flex-column align-items-center justify-content-center" style="height: 70vh;">
+        <h1>It seems you don't have account yet,</h1>
+        <h2>to continue your experience you have to sign in</h2>
+        <a href="{% url 'login' %}" class="btn btn-primary">go to login page</a>
+    </article>
+    {% endif %}
 </article>
 
 <script>

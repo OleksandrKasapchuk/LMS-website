@@ -49,23 +49,7 @@
 			</div>
 		</div>
 	</nav>
-	{% if messages %}
-		{% for message in messages %}
-        {% if message.tags == "success" %}
-        <div class="alert alert-success alert-dismissible" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-        {% if message.tags == "error" %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-        {% endif %}
-		{% endfor %}
-	{% endif %}
-	<div class="d-flex" style="height: 94vh;">
+	<div class="d-flex" style="height: 94vh;" id="main">
 		<aside class="col-md-2 bg-light border-end px-3" id="sidebar">
 			<h5>My Courses</h5>
 			<ul class="list-group">
@@ -75,7 +59,7 @@
 				</li>
 				<br>
 				{% empty %}
-				<li class="list-group-item text-muted">No courses available.</li>
+				<li class="text-muted">No courses available.</li>
 				{% endfor %}
 			</ul>
 			<hr>
@@ -87,13 +71,29 @@
 				</li>
 				<br>
 				{% empty %}
-				<li class="list-group-item text-muted">No courses available.</li>
+				<li class="text-muted">No courses available.</li>
 				{% endfor %}
 			</ul>
-
 		</aside>
+
 		<!-- Main content -->
 		<main class="col-md-10">
+			{% if messages %}
+				{% for message in messages %}
+				{% if message.tags == "success" %}
+					<div class="alert alert-success alert-dismissible" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endif %}
+				{% if message.tags == "error" %}
+					<div class="alert alert-warning alert-dismissible fade show" role="alert">
+						{{ message }}
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				{% endif %}
+		{% endfor %}
+	{% endif %}
 			{% block content %}
 			{% endblock %}
 		</main>
@@ -102,8 +102,10 @@
 		// Перевіряємо наявність стану сайдбара в localStorage і застосовуємо відповідний стиль
 		window.addEventListener('load', () => {
 			const sidebar = document.getElementById('sidebar');
+			const main = document.getElementById('main');
 			if (localStorage.getItem('sidebarVisible') === 'false') {
 				sidebar.classList.add('hidden');
+				main.classList.add('justify-content-center');
 			}
 		});
 

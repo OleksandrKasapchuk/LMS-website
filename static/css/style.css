@@ -325,3 +325,19 @@ body.sidebar-loaded #sidebar {
 .hidden {
     display: none;
 }
+
+.custom-file-upload {
+    display: inline-block;
+    position: relative;
+    border: 2px dashed #6c757d;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.custom-file-upload:hover {
+    background-color: #f8f9fa;
+    border-color: #007bff;
+}

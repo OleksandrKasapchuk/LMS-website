@@ -1,0 +1,26 @@
+#EXTM3U
+
+#EXTINF:-1, (Radio Relax - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax
+#EXTINF:-1, (Radio Relax - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Live
+
+#EXTINF:-1, (Radio Relax International - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Int
+#EXTINF:-1, (Radio Relax International - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Int_Live
+
+#EXTINF:-1, (Radio Relax Instrumental - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Instrumental
+#EXTINF:-1, (Radio Relax Instrumental - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Instrumental_Live
+
+#EXTINF:-1, (Radio Relax Cafe - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Cafe
+#EXTINF:-1, (Radio Relax Cafe - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Cafe_Live
+
+#EXTINF:-1, (Radio Relax Christmas - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Christmas
+#EXTINF:-1, (Radio Relax Christmas - www.radiorelax.ua)
+http://online.radiorelax.ua/RadioRelax_Christmas_Live
