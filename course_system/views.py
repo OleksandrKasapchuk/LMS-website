@@ -265,3 +265,14 @@ class DeleteUploadedFileView(LoginRequiredMixin, View):
 		file.delete()
 
 		return redirect(f'/{lesson.course.pk}/{lesson.pk}')
+
+
+class MarkView(LoginRequiredMixin, View):
+	def post(self, request, *args, **kwargs):
+		answer = get_object_or_404(Answer, pk=self.kwargs["pk"])
+		
+		mark = request.POST.get('mark')
+		answer.mark = mark
+		answer.save()
+
+		return redirect(f"/{answer.lesson.course.pk}/{answer.lesson.pk}?tab=answers")

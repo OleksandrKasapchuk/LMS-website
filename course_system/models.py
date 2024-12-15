@@ -39,6 +39,8 @@ class Lesson(models.Model):
     edited = models.BooleanField(default=False)  # Поле для відстеження редагування
     last_edited_at = models.DateTimeField(null=True, blank=True)  # Дата останнього редагування
     
+    max_mark = models.PositiveIntegerField(default=100)
+
     def save(self, *args, **kwargs):
         # Перевіряємо, чи це оновлення існуючого об'єкта
         if self.pk is not None:
