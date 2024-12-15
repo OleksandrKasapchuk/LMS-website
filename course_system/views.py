@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from .models import *
-from django.views.generic import View, ListView, DetailView, CreateView, TemplateView, UpdateView, DeleteView
+from django.views.generic import View, ListView, DetailView,UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .forms import *
 from .mixins import *
-
 
 class CourseView(ListView):
 	model = Course
@@ -102,11 +101,10 @@ class LessonCreateView(LoginRequiredMixin, View):
 			pass
 
 
-class LessonDetailView(DetailView):
+class LessonDetailView(LoginRequiredMixin,DetailView):
 	model = Lesson
 	template_name = "course_system/lesson_info.html"
-	context_object_name = "lesson"
-
+	
 	def post(self, request,pk, *args, **kwargs):
 		lesson = get_object_or_404(Lesson, pk=pk)
 		content = request.POST.get('content')
@@ -134,6 +132,17 @@ class LessonDetailView(DetailView):
 		context = super().get_context_data(**kwargs)
 		lesson = self.get_object()
 		user = self.request.user
+		tab_name = self.request.GET.get('tab', 'about')
+
+		if tab_name == 'about':
+			context['lesson'] = lesson
+		elif tab_name == 'answers':
+			if user == lesson.course.user:
+				context["answers"] = Answer.objects.filter(lesson=self.object)
+			else:
+				raise PermissionDenied
+
+		context["tab"] = tab_name
 
 		# Перевіряємо, чи користувач здав роботу
 		user_answer = lesson.answers.filter(user=user).first()
