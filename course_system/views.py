@@ -136,15 +136,15 @@ class LessonDetailView(DetailView):
 		user = self.request.user
 
 		# Перевіряємо, чи користувач здав роботу
-		user_answers = lesson.answers.filter(user=user)
-		context['user_has_answered'] = user_answers is not None
+		user_answer = lesson.answers.filter(user=user).first()
+		context['user_has_answered'] = user_answer is not None
 
-		if user_answers:
+		if user_answer:
 			# Додаємо відповідь користувача
-			context['user_answer'] = user_answers
+			context['user_answer'] = user_answer
 
 			# Додаємо оцінку за відповідь, якщо вона є
-			context['mark'] = user_answers.mark
+			context['mark'] = user_answer.mark
 
 		return context
 
@@ -211,41 +211,25 @@ class SubscriptionView(LoginRequiredMixin, View):
 
 
 class AddAnswerView(LoginRequiredMixin,View):
-    # def post(self, request, *args, **kwargs):
-    #     lesson = get_object_or_404(Lesson, pk=self.kwargs['pk'])
-        
-    #     # Перевіряємо, чи вже є відповідь від цього користувача
-    #     answer = Answer.objects.filter(user=request.user, lesson=lesson).first()
-        
-    #     if not answer:  # Якщо відповіді ще немає, створюємо нову
-    #         answer = Answer.objects.create(
-    #             user=request.user,
-    #             lesson=lesson,
-    #             upload_data=request.FILES.get('data')
-    #         )
-
-    #     return redirect(f"/{lesson.course.pk}/{lesson.pk}")
     def post(self, request, pk, *args, **kwargs):
         lesson = get_object_or_404(Lesson, pk=pk)
 		
         files = request.FILES.getlist('data')  # Отримання всіх файлів
+        if not files:
+            return JsonResponse({'success': False, 'error': 'No files uploaded'}, status=400)
 
         try:
+			# Створення відповіді
+            answer, created = Answer.objects.get_or_create(user=request.user, lesson=lesson)
+
+			# Додавання файлів до відповіді
             for file in files:
-                Answer.objects.create(
-					user=request.user,
-					lesson=lesson,
-					upload_data=file
-				)
-			
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'success': True})
-			
-            return redirect('lesson-details', pk=lesson.pk, course=lesson.course.pk)
+                UploadedFile.objects.create(answer=answer, file=file)
+
+                return redirect('lesson-details', pk=lesson.pk, course=lesson.course.pk)
 		
         except Exception as e:
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'success': False, 'error': str(e)})
+            return JsonResponse({'success': False, 'error': str(e)}, status=500)
 
 
 
@@ -262,3 +246,13 @@ class AnswerReturnView(LoginRequiredMixin, View):
             return redirect(f'/{lesson.course.pk}/{lesson.pk}')
         else:
             return JsonResponse({'success': False, 'message': 'Робота не знайдена.'}, status=404)
+
+
+class DeleteUploadedFileView(LoginRequiredMixin, View):
+	def post(self, request, *args, **kwargs):
+		file = get_object_or_404(UploadedFile, pk=self.kwargs["pk"])
+		lesson = file.answer.lesson
+
+		file.delete()
+
+		return redirect(f'/{lesson.course.pk}/{lesson.pk}')

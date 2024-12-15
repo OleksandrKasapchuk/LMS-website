@@ -16,4 +16,5 @@ urlpatterns = [
 	path('<int:course>/<int:pk>/delete', LessonDeleteView.as_view(), name='lesson-delete'),
 	path('<int:course>/<int:pk>/answer', AddAnswerView.as_view(), name='lesson-answer'),
 	path('<int:course>/<int:pk>/return-answer', AnswerReturnView.as_view(), name='return-answer'),
+	path('delete-file/<int:pk>', DeleteUploadedFileView.as_view(), name='delete-file'),
 ]
