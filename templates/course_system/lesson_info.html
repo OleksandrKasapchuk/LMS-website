@@ -39,7 +39,7 @@
             <section>
                 <p>{{lesson.content}}</p>
                 {% if lesson.upload_data %}
-                    <a href="{{ lesson.upload_data.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3" style="width: 350px;">
+                    <a href="{{ lesson.upload_data.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 350px; ::hover {color:blue}">
                         <section class="me-3">
                             {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
                                 <img src="{{lesson.upload_data.url}}" style="width: 90px; height: 60px;">
@@ -91,11 +91,11 @@
                     <section class="d-flex justify-content-between">
                         <h4>Your answer</h4> {% if mark %} <i class="text-muted">Evaluated</i> {% endif %}
                     </section>
+                    <article id="uploaded-files-container">
                     {% if user_has_answered %}
-                        <article>
                             {% for file in user_answer.files.all %}
                                 <div class=" position-relative d-flex align-items-center border border-black rounded p-2 mb-3">
-                                    <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-dark">
+                                    <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-dark text-hover">
                                         <section class="me-3">
                                             {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
                                                 <img src="{{ file.file.url }}" alt="Preview" style="width: 90px; height: 60px;">
@@ -116,49 +116,149 @@
                                     </a>
                                 </div>
                             {% endfor %}
+                            {% endif %}
                         </article>
-                    {% endif %}
-                        <form method="POST" enctype="multipart/form-data" action="{% url 'lesson-answer' lesson.course.pk lesson.pk %}">
-                            {% csrf_token %}
-                            <div class="custom-file-upload" style="width:100%">
-                                <label for="data" class="d-flex justify-content-center align-items-center gap-3 pointer" >
-                                    <span class="material-symbols-outlined fs-3">cloud_upload</span>
-                                    <span id="file-names" class="fs-5">Choose files...</span>
-                                </label>
-                                <input type="file" id="data" name="data" class="d-none" multiple onchange="showFileNames(event)">
-                            </div>
-                            <br>
-                            <br>
-                            <button type="submit" class="btn btn-primary" style="width:100%">Send</button>
-                        </form>
-                        <form method="POST" action="{% url 'return-answer' lesson.course.pk lesson.pk %}" class="mt-3">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger" style="width:100%">Return answer</button>
-                        </form>
+                        <div class="custom-file-upload" style="width:100%">
+                            <label for="data" class="d-flex justify-content-center align-items-center gap-3 pointer">
+                                <span class="material-symbols-outlined fs-3">cloud_upload</span>
+                                <span id="file-names" class="fs-5">Choose files...</span>
+                            </label>
+                            <input type="file" id="data" name="data" class="d-none" multiple onchange="uploadFiles(event)">
+                        </div>
+                        <div id="uploaded-files"></div>
+                    
+                        {% if user.answer.user_send %}
+                            <form method="POST" action="{% url 'send-answer' lesson.course.pk lesson.pk %}" class="mt-3">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary" style="width:100%">Send answer</button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{% url 'return-answer' lesson.course.pk lesson.pk %}" class="mt-3">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger" style="width:100%">Return answer</button>
+                            </form>
+                        {% endif %}
                 </article>
             </section>
         {% endif %}
     {% else %}
-        {% for answer in answers %}
-            <article class="d-flex flex-column">
-                <h2>{{answer.user}}</h2>
-                {% for file in answer.files.all %}
-                <br>
-                    <img src="{{file.file.url}}" style="width: 200px; height: 100px;">
-                {% endfor %}
-                <br>
-                <form method="POST" action="{% url 'mark-answer' answer.pk %}">
-                    {% csrf_token %}
-                    <label for="mark">Give a mark</label>
-                    <input name="mark" id="mark" type="number" value="{% if answer.mark %}{{answer.mark}}{% endif %}">
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </article>
-        {% endfor %}
+        <article class="d-flex flex-column container">
+            {% for answer in answers %}
+                <article class="d-flex flex-column border border-black rounded p-2 mb-3">
+                    {% if answer.user_send %}
+                        <section class="d-flex justify-content-between">
+                            <h2>{{answer.user}}</h2>
+                            <a href="#" onclick="answerToggle({{answer.pk}})">Look answer</a>
+                        </section>
+                        
+                        <section id="{{answer.pk}}">
+                            {% for file in answer.files.all %}
+                            <a href="{{ file.file.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 350px;">
+                                <section class="me-3">
+                                    {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
+                                        <img src="{{file.file.url}}" style="width: 90px; height: 60px;">
+                                    {% elif file.file.url|endswith:".mp4" %}
+                                        <video style="width: 90px; height: 60px;" muted>
+                                            <source src="{{ file.file.url}}"  type="mp4/video">
+                                            Your browser does not support video tag
+                                        </video>
+                                    {% elif file.file.url|endswith:"mp3" %}
+                                        <audio src="{{ file.file.url}}" controls></audio>
+                                    {% else %}
+                                        <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
+                                    {% endif %}
+                                </section>
+                                <section class="overflow-hidden">
+                                    {{ file.file|cut:"answer_media/" }}
+                                </section>
+                            </a>
+
+                            {% empty %}
+                            <i class="no-lessons">No files uploaded</i>
+                            {% endfor %}
+                            <form method="POST" action="{% url 'mark-answer' answer.pk %}">
+                                {% csrf_token %}
+                                <label for="mark">Give a mark</label>
+                                <input name="mark" id="mark" type="number" value="{% if answer.mark %}{{answer.mark}}{% endif %}">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </section>
+                    </article>
+                {% endif %}
+            {% endfor %}
+        </article>
     {% endif %}
 </article>
-
+        
 <script>
+    function renderUploadedFiles(files) {
+    const container = document.getElementById('uploaded-files-container'); // Знайти контейнер для відображення файлів
+    if (!container) {
+        console.error("Container for uploaded files not found!");
+        return;
+    }
+
+    files.forEach(file => {
+        const fileElement = document.createElement('div');
+        fileElement.className = 'position-relative d-flex align-items-center border border-black rounded p-2 mb-3';
+        
+        fileElement.innerHTML = `
+            <a href="${file.url}" target="_blank" class="d-flex align-items-center text-decoration-none text-dark text-hover">
+                <section class="me-3">${file.preview}</section>
+                <p class="overflow-hidden" style="width: 200px">${file.name}</p>
+            </a>
+            <a href="#" onclick="deleteFile('${file.id}')" class="position-absolute top-50 end-0 translate-middle-y me-2 text-dark">
+                <span class="material-symbols-outlined">close</span>
+            </a>
+        `;
+        container.appendChild(fileElement);
+    });
+}
+
+    function uploadFiles(event) {
+        const files = event.target.files;
+        const formData = new FormData();
+        const lessonId = "{{ lesson.pk }}";
+        const courseId = "{{ lesson.course.pk }}";
+
+        // Додаємо файли до FormData
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files[]', files[i]);
+        }
+
+        // Додаємо CSRF-токен
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        // Відправляємо запит
+        fetch(`/lesson-answer-upload/${courseId}/${lessonId}/`, {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Files uploaded:', data.files);
+                renderUploadedFiles(data.files); // Відобразіть файли на сторінці
+            } else {
+                console.error('Error uploading files:', data.error);
+                alert('Error uploading files: ' + data.error); // Виведіть детальну помилку
+            }
+        })
+        .catch(error => {
+            console.error('Unexpected error:', error);
+            alert('Unexpected error: ' + error.message);
+    });}
+
+
+    function answerToggle(Id) {
+        answer = document.getElementById(Id)
+        if (answer.style.display == "none") {
+            answer.style.display = "block"
+        } else {
+            answer.style.display = "none"
+        }
+    }
+
     function loadTab(tabName) {
         window.location.href = `?tab=${tabName}`;
     }
@@ -187,50 +287,50 @@
     }
 
 	function SendComment(courseId, lessonId) {
-    const content = document.getElementById('message-content').value.trim();
-    if (content === '') {
-        alert('Please enter the text.');
-        return;
+        const content = document.getElementById('message-content').value.trim();
+        if (content === '') {
+            alert('Please enter the text.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('content', content);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        fetch(`/${courseId}/${lessonId}`, { // Оновлено URL
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const lessonComments = document.getElementById('comments');
+                const newComment = document.createElement('li');
+                newComment.classList.add('comment-item');
+                newComment.innerHTML = `
+                    <p class="comment-author">
+                        <a href="${data.user_url}">
+                            <b>${data.username}</b>
+                        </a>
+                        ${data.date_published}
+                    </p>
+                    <p class="comment-content">${data.content}</p>
+                `;
+                lessonComments.appendChild(newComment);
+                document.getElementById('message-content').value = '';
+            } else {
+                alert('Error sending message: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
-
-    const formData = new FormData();
-    formData.append('content', content);
-    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-
-    fetch(`/${courseId}/${lessonId}`, { // Оновлено URL
-        method: 'POST',
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-        body: formData
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            const lessonComments = document.getElementById('comments');
-            const newComment = document.createElement('li');
-            newComment.classList.add('comment-item');
-            newComment.innerHTML = `
-                <p class="comment-author">
-                    <a href="${data.user_url}">
-                        <b>${data.username}</b>
-                    </a>
-                    ${data.date_published}
-                </p>
-                <p class="comment-content">${data.content}</p>
-            `;
-            lessonComments.appendChild(newComment);
-            document.getElementById('message-content').value = '';
-        } else {
-            alert('Error sending message: ' + (data.error || 'Unknown error'));
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
 </script>
 {% endblock %}

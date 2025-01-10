@@ -341,3 +341,7 @@ body.sidebar-loaded #sidebar {
     background-color: #f8f9fa;
     border-color: #007bff;
 }
+
+.text-hover:hover {
+    color: blue;
+}

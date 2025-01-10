@@ -7,6 +7,7 @@ from django.http import JsonResponse, HttpResponse
 from .forms import *
 from .mixins import *
 
+
 class CourseView(ListView):
 	model = Course
 	template_name = "course_system/course_list.html"
@@ -217,29 +218,65 @@ class SubscriptionView(LoginRequiredMixin, View):
 
 		# Якщо вже підписаний, перенаправляємо назад
 		return redirect("course_detail", pk=course.pk)
+	
 
+def send_answer(request, course,pk):
+	answer, created = Answer.objects.get_or_create(user=request.user, lesson=Lesson.objects.get(pk=pk))
+	if answer != None:
+		answer.user_send = True
+		answer.save()
+	else:
+		created.user_send = True
+		created.save()
+	return redirect(f"/{course}/{pk}")
 
-class AddAnswerView(LoginRequiredMixin,View):
-    def post(self, request, pk, *args, **kwargs):
-        lesson = get_object_or_404(Lesson, pk=pk)
-		
-        files = request.FILES.getlist('data')  # Отримання всіх файлів
-        if not files:
-            return JsonResponse({'success': False, 'error': 'No files uploaded'}, status=400)
+import logging
 
+logger = logging.getLogger(__name__)
+
+class UploadAnswerFileView(View):
+    def post(self, request, course_pk, lesson_pk, *args, **kwargs):
         try:
-			# Створення відповіді
-            answer, created = Answer.objects.get_or_create(user=request.user, lesson=lesson)
+            files = request.FILES.getlist('files[]')
+            if not files:
+                return JsonResponse({'success': False, 'error': 'No files received'}, status=400)
 
-			# Додавання файлів до відповіді
+            logger.info(f"Received files: {files}")
+            
+            # Отримуємо або створюємо відповідь
+            answer, created = Answer.objects.get_or_create(
+                user=request.user,
+                lesson=Lesson.objects.get(pk=lesson_pk),
+
+            )
+            
+            uploaded_files = []
+
+            # Завантажуємо кожен файл
             for file in files:
-                UploadedFile.objects.create(answer=answer, file=file)
+                logger.info(f"Processing file: {file.name}")
+                if answer != None:
+                    uploaded_file = UploadedFile.objects.create(answer=answer, file=file)
+                else:
+                    uploaded_file = UploadedFile.objects.create(answer=created, file=file)
 
-                return redirect('lesson-details', pk=lesson.pk, course=lesson.course.pk)
-		
+                uploaded_files.append({
+                    'id': uploaded_file.pk,
+                    'url': uploaded_file.file.url,
+                    'name': uploaded_file.file.name.split('/')[-1],
+                    'preview': (
+                        f'<img src="{uploaded_file.file.url}" style="width: 90px; height: 60px;">'
+                        if file.content_type.startswith('image') 
+                        else '<span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>'
+                    ),
+                })
+
+            logger.info(f"Successfully uploaded files: {uploaded_files}")
+            return JsonResponse({'success': True, 'files': uploaded_files})
+
         except Exception as e:
+            logger.error(f"Error while uploading files: {e}")
             return JsonResponse({'success': False, 'error': str(e)}, status=500)
-
 
 
 class AnswerReturnView(LoginRequiredMixin, View):
