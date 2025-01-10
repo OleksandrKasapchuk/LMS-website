@@ -4,6 +4,7 @@
 
 {% block content %}
 {% load custom_tags %}
+
 {% if request.user == lesson.course.user %}
 <header class="d-flex gap-3 mb-3 ps-4 pt-2">
     <span onclick="loadTab('about')" class="pointer {% if tab == 'about' %}my-active {% else %} gray-text {% endif %}">About</span>
@@ -11,185 +12,17 @@
 </header>
 <hr>
 {% endif %}
+
 <br>
+
 <article class="d-flex container gap">
     {% if tab == 'about' %}
-        <section class="d-flex flex-column lesson-main">
-            <section class="d-flex justify-content-between">
-                <h1>{{ lesson.name }}  </h1>
-        
-                {% if request.user == lesson.course.user %}
-                <div class="dropdown">
-                    <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="material-symbols-outlined">more_vert</span>
-                    </button>
-                    <ul class="dropdown-menu custom-dropdown-menu">
-                        <li><a href="{% url 'lesson-edit' lesson.course.pk lesson.pk %}" class="dropdown-item">Edit lesson</a></a></li>
-                        <li><a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}" class="dropdown-item">Delete lesson</a></li>
-                    </ul>
-                </div>
-                {% endif %}
-            </section>
-
-            <h5 class="text-muted">{{ lesson.course.user }} {{ lesson.date_published|custom_date_format }} {% if lesson.edited %} (Edited {{lesson.last_edited_at|custom_date_format}}) {% endif %}</h5>
-            <h5>{% if mark %} {{mark}}/{% endif %}{{lesson.max_mark}} points</h5>
-            <h5 class="lesson-info-date">Due: {% if lesson.date_to %} {{lesson.date_to|custom_date_format}} {% else %} no date {% endif %}</h5>
-        
-            <hr>
-            <section>
-                <p>{{lesson.content}}</p>
-                {% if lesson.upload_data %}
-                    <a href="{{ lesson.upload_data.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 350px; ::hover {color:blue}">
-                        <section class="me-3">
-                            {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
-                                <img src="{{lesson.upload_data.url}}" style="width: 90px; height: 60px;">
-                            {% elif lesson.upload_data.url|endswith:".mp4" %}
-                                <video style="width: 90px; height: 60px;" muted>
-                                    <source src="{{ lesson.upload_data.url}}"  type="mp4/video">
-                                    Your browser does not support video tag
-                                </video>
-                            {% elif lesson.upload_data.url|endswith:"mp3" %}
-                                <audio src="{{ lesson.upload_data.url}}" controls></audio>
-                            {% else %}
-                                <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
-                            {% endif %}
-                        </section>
-                        <section class="overflow-hidden">
-                            {{ lesson.upload_data|cut:"lesson_media/" }}
-                        </section>
-                    </a>
-                {% endif %}
-            </section>
-
-            <hr>
-            <h4>Lesson comments</h4>
-            <section class="comments-section">
-                <ul id="comments" class="comments-list position-relative">
-                    {% for comment in lesson.comments.all %}
-                    <li class="comment-item">
-                        <p class="comment-author">
-                            <a href="{% url 'user-info' comment.user.pk %}">
-                                <b>{{ comment.user }}</b>
-                            </a>
-                            {{ comment.date_published|custom_date_format }}
-                        </p>
-                        <p class="comment-content">{{ comment.content }}</p>
-                    </li>
-                    {% endfor %}
-                </ul>
-            
-                <section class="add-comment">
-                    <input id="message-content" placeholder="Add a comment..." class="comment-input">
-                    <button class="send-btn" onclick="SendComment({{ lesson.course.pk }}, {{ lesson.pk }})">Send</button>
-                </section>
-            </section>
-        </section>
-        {% if request.user != lesson.course.user %}
-
-            <section class="answer-container">
-                <article class="p-4" style="width: 400px;">
-                    <section class="d-flex justify-content-between">
-                        <h4>Your answer</h4> {% if mark %} <i class="text-muted">Evaluated</i> {% endif %}
-                    </section>
-                    <article id="uploaded-files-container">
-                    {% if user_has_answered %}
-                            {% for file in user_answer.files.all %}
-                                <div class=" position-relative d-flex align-items-center border border-black rounded p-2 mb-3">
-                                    <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-dark text-hover">
-                                        <section class="me-3">
-                                            {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
-                                                <img src="{{ file.file.url }}" alt="Preview" style="width: 90px; height: 60px;">
-                                            {% elif file.file.url|endswith:".mp4" %}
-                                                <video style="width: 90px; height: 60px;" muted>
-                                                    <source src="{{ file.file.url }}" type="video/mp4">
-                                                </video>
-                                            {% else %}
-                                                <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
-                                            {% endif %}
-                                        </section>
-                                        <p class="overflow-hidden" style="width: 200px">
-                                            {{ file.file|cut:"answer_media/" }}
-                                        </p>
-                                    </a>
-                                    <a href="#" onclick="deleteFile('{{ file.pk }}')" class="position-absolute top-50 end-0 translate-middle-y me-2 text-dark">
-                                        <span class="material-symbols-outlined">close</span>
-                                    </a>
-                                </div>
-                            {% endfor %}
-                            {% endif %}
-                        </article>
-                        <div class="custom-file-upload" style="width:100%">
-                            <label for="data" class="d-flex justify-content-center align-items-center gap-3 pointer">
-                                <span class="material-symbols-outlined fs-3">cloud_upload</span>
-                                <span id="file-names" class="fs-5">Choose files...</span>
-                            </label>
-                            <input type="file" id="data" name="data" class="d-none" multiple onchange="uploadFiles(event)">
-                        </div>
-                        <div id="uploaded-files"></div>
-                    
-                        {% if user.answer.user_send %}
-                            <form method="POST" action="{% url 'send-answer' lesson.course.pk lesson.pk %}" class="mt-3">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary" style="width:100%">Send answer</button>
-                            </form>
-                        {% else %}
-                            <form method="POST" action="{% url 'return-answer' lesson.course.pk lesson.pk %}" class="mt-3">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger" style="width:100%">Return answer</button>
-                            </form>
-                        {% endif %}
-                </article>
-            </section>
-        {% endif %}
+        {% include './lesson_about.html' %}
     {% else %}
-        <article class="d-flex flex-column container">
-            {% for answer in answers %}
-                <article class="d-flex flex-column border border-black rounded p-2 mb-3">
-                    {% if answer.user_send %}
-                        <section class="d-flex justify-content-between">
-                            <h2>{{answer.user}}</h2>
-                            <a href="#" onclick="answerToggle({{answer.pk}})">Look answer</a>
-                        </section>
-                        
-                        <section id="{{answer.pk}}">
-                            {% for file in answer.files.all %}
-                            <a href="{{ file.file.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 350px;">
-                                <section class="me-3">
-                                    {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
-                                        <img src="{{file.file.url}}" style="width: 90px; height: 60px;">
-                                    {% elif file.file.url|endswith:".mp4" %}
-                                        <video style="width: 90px; height: 60px;" muted>
-                                            <source src="{{ file.file.url}}"  type="mp4/video">
-                                            Your browser does not support video tag
-                                        </video>
-                                    {% elif file.file.url|endswith:"mp3" %}
-                                        <audio src="{{ file.file.url}}" controls></audio>
-                                    {% else %}
-                                        <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
-                                    {% endif %}
-                                </section>
-                                <section class="overflow-hidden">
-                                    {{ file.file|cut:"answer_media/" }}
-                                </section>
-                            </a>
-
-                            {% empty %}
-                            <i class="no-lessons">No files uploaded</i>
-                            {% endfor %}
-                            <form method="POST" action="{% url 'mark-answer' answer.pk %}">
-                                {% csrf_token %}
-                                <label for="mark">Give a mark</label>
-                                <input name="mark" id="mark" type="number" value="{% if answer.mark %}{{answer.mark}}{% endif %}">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>
-                        </section>
-                    </article>
-                {% endif %}
-            {% endfor %}
-        </article>
+        {% include './lesson_answers.html' %}
     {% endif %}
 </article>
-        
+
 <script>
     function renderUploadedFiles(files) {
     const container = document.getElementById('uploaded-files-container'); // Знайти контейнер для відображення файлів
@@ -213,6 +46,8 @@
         `;
         container.appendChild(fileElement);
     });
+    const send_btn = document.getElementById("send-btn");
+    send_btn.innerText = "Send answer";
 }
 
     function uploadFiles(event) {

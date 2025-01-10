@@ -9,10 +9,12 @@
             <form method="POST" action="{% url 'join-course' %}">
                 <h1>Join Course</h1>
                 {% csrf_token %}
+
                 <section>
                     <label for="code">Code:</label>
                     <input type="text" required id="code"  name="code" class="form-control">
                 </section>
+                
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </section>

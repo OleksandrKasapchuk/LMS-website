@@ -6,6 +6,7 @@
 <article class="container mt-3">
     <article class="row justify-content-center align-items-center">
         <section class="col-lg-6 col-md-8 col-12 px-5">
+
             <section class="d-flex gap2 ps-4 profile-header">
                 <img src="{{ user.avatar.url }}" class="avatar profile-avatar">
                 <article class="d-flex flex-column gap">
@@ -21,12 +22,16 @@
                     
                 </article>
             </section>
+
             <br>
+
             <section>
                 <h3>User courses:</h3>
+                
                 {% if request.user == user %}
-                <h4><a href="{% url 'add-course' %}">Create a course</a></h4>
+                    <h4><a href="{% url 'add-course' %}">Create a course</a></h4>
                 {% endif %}
+
                 {% for course in courses %}
                     <br>
                     <article class="course-container">
@@ -44,7 +49,7 @@
                             </div>
                         </a>
                     </article>
-                    {% empty %}
+                {% empty %}
                     <h3><i>User does not have any course yet...</i></h3>
                 {% endfor %}
             </section>

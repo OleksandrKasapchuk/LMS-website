@@ -9,6 +9,7 @@
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h1>Edit Lesson:</h1>
+
                 <section>
                     <label for="name">Name:</label>
                     <input type="text" required id="name"  name="name" class="form-control" value="{{lesson.name}}">
@@ -28,6 +29,7 @@
                     <label for="upload_data">Upload_data:</label>
                     <input type="file" id="upload_data" name="upload_data" class="form-control" value="{% if lesson.upload_data %}{{lesson.upload_data.url}}{% endif %}">
                 </section>
+                
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </section>

@@ -133,15 +133,19 @@ class LessonDetailView(LoginRequiredMixin,DetailView):
 		context = super().get_context_data(**kwargs)
 		lesson = self.get_object()
 		user = self.request.user
+		answer = Answer.objects.filter(user=user, lesson=lesson).first()
 		tab_name = self.request.GET.get('tab', 'about')
 
 		if tab_name == 'about':
 			context['lesson'] = lesson
 		elif tab_name == 'answers':
 			if user == lesson.course.user:
-				context["answers"] = Answer.objects.filter(lesson=self.object)
+				context["answers"] = Answer.objects.filter(lesson=self.object, user_send=True)
 			else:
 				raise PermissionDenied
+		if answer:
+			context["user_send"] = answer.user_send
+			context['answer'] = answer
 
 		context["tab"] = tab_name
 

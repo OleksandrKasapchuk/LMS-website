@@ -15,43 +15,51 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg bg-body-tertiary bg-primary">
+		
 		<div class="container-fluid">
 			<h2 onclick=toggleSidebar() class="me-3"><span class="material-symbols-outlined pointer">menu</span></h2>
 			<a class="navbar-brand" href="{% url 'index' %}">LMS</a>
+			
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
+
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav ms-auto d-flex align-items-center">
 					{% if request.user.is_authenticated %}
-					<li class="nav-item dropdown me-3">
-						<a class="nav-link active d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<span class="material-symbols-outlined">add</span>
-						</a>
-						<ul class="dropdown-menu custom-dropdown-menu">
-							<li>
-								<a class="dropdown-item" href="{% url 'add-course' %}">Create a course</a>
-							</li>
-							<li>
-								<a class="dropdown-item" href="{% url 'join-course' %}">Join a course</a>
-							</li>
-						</ul>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="{% url 'user-info' request.user.pk %}"><img src="{{request.user.avatar.url}}" alt="Profile photo" class="rounded-circle" style="width: 35px;height: 35px;"></a>
-					</li>
+						<li class="nav-item dropdown me-3">
+							<a class="nav-link active d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+								<span class="material-symbols-outlined">add</span>
+							</a>
+							
+							<ul class="dropdown-menu custom-dropdown-menu">
+								<li>
+									<a class="dropdown-item" href="{% url 'add-course' %}">Create a course</a>
+								</li>
+
+								<li>
+									<a class="dropdown-item" href="{% url 'join-course' %}">Join a course</a>
+								</li>
+							</ul>
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-link active" aria-current="page" href="{% url 'user-info' request.user.pk %}"><img src="{{request.user.avatar.url}}" alt="Profile photo" class="rounded-circle" style="width: 35px;height: 35px;"></a>
+						</li>
 					{% else %}
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="{% url 'login' %}">Login</a>
-					</li>
+						<li class="nav-item">
+							<a class="nav-link active" aria-current="page" href="{% url 'login' %}">Login</a>
+						</li>
 					{% endif %}
 				</ul>
 			</div>
 		</div>
 	</nav>
+
 	<div class="d-flex" style="height: 94vh;" id="main">
 		<aside class="col-md-2 bg-light border-end px-3" id="sidebar">
 			<h5>My Courses</h5>
+
 			<ul class="list-group">
 				{% for course in user_courses %}
 				<li class="list-group-item">
@@ -62,8 +70,11 @@
 				<li class="text-muted">No courses available.</li>
 				{% endfor %}
 			</ul>
+
 			<hr>
+
 			<h5>Joined Courses:</h5>
+
 			<ul class="list-group">
 				{% for course in joined_courses %}
 				<li class="list-group-item">
@@ -98,6 +109,7 @@
 			{% endblock %}
 		</main>
 	</div>
+	
 	<script>
 		// Перевіряємо наявність стану сайдбара в localStorage і застосовуємо відповідний стиль
 		window.addEventListener('load', () => {

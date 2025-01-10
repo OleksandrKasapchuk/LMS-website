@@ -39,11 +39,6 @@
                     <input type="email" id="email" name="email" class="form-control" value="{{user.email}}">
                 </section>
 
-                <section>
-                    <label for="bio">Bio:</label>
-                    <input type="bio" required id="bio" name="bio" class="form-control" value="{{user.bio}}">
-                </section>
-
                 <button type="submit"class="btn btn-primary">Submit</button>
                 <a href="{% url 'change-password' user.id %}" >Change password</a>
             </form>
