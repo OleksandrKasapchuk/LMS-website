@@ -77,42 +77,46 @@
     <section class="answer-container">
         <article class="p-4" style="width: 400px;">
             <section class="d-flex justify-content-between">
-                <h4>Your answer</h4> {% if mark %} <i class="text-muted">Evaluated</i> {% endif %}
+                <h4>Your answer</h4> {% if user_send %} <i class="text-muted">{% if mark %} Evaluated {% else %} Uploaded {% endif %}</i> {% endif %}
             </section>
+
             <article id="uploaded-files-container">
-            {% if user_has_answered %}
-                {% for file in user_answer.files.all %}
-                    <div class=" position-relative d-flex align-items-center border border-black rounded p-2 mb-3">
-                        <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-dark text-hover">
-                            <section class="me-3">
-                                {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
-                                    <img src="{{ file.file.url }}" alt="Preview" style="width: 90px; height: 60px;">
-                                {% elif file.file.url|endswith:".mp4" %}
-                                    <video style="width: 90px; height: 60px;" muted>
-                                        <source src="{{ file.file.url }}" type="video/mp4">
-                                    </video>
-                                {% else %}
-                                    <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
-                                {% endif %}
-                            </section>
-                            <p class="overflow-hidden" style="width: 200px">
-                                {{ file.file|cut:"answer_media/" }}
-                            </p>
-                        </a>
-                        <a href="#" onclick="deleteFile('{{ file.pk }}')" class="position-absolute top-50 end-0 translate-middle-y me-2 text-dark">
-                            <span class="material-symbols-outlined">close</span>
-                        </a>
-                    </div>
-                {% endfor %}
-            {% endif %}
+                {% if user_has_answered %}
+                    {% for file in user_answer.files.all %}
+                        <div class=" position-relative d-flex align-items-center border border-black rounded p-2 mb-3">
+                            <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-dark text-hover">
+                                <section class="me-3">
+                                    {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
+                                        <img src="{{ file.file.url }}" alt="Preview" style="width: 90px; height: 60px;">
+                                    {% elif file.file.url|endswith:".mp4" %}
+                                        <video style="width: 90px; height: 60px;" muted>
+                                            <source src="{{ file.file.url }}" type="video/mp4">
+                                        </video>
+                                    {% else %}
+                                        <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
+                                    {% endif %}
+                                </section>
+                                <p class="overflow-hidden" style="width: 200px">
+                                    {{ file.file|cut:"answer_media/" }}
+                                </p>
+                            </a>
+                            <a href="#" onclick="deleteFile('{{ file.pk }}')" class="position-absolute top-50 end-0 translate-middle-y me-2 text-dark">
+                                <span class="material-symbols-outlined">close</span>
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             </article>
-            <div class="custom-file-upload" style="width:100%">
-                <label for="data" class="d-flex justify-content-center align-items-center gap-3 pointer">
-                    <span class="material-symbols-outlined fs-3">cloud_upload</span>
-                    <span id="file-names" class="fs-5">Choose files...</span>
-                </label>
-                <input type="file" id="data" name="data" class="d-none" multiple onchange="uploadFiles(event)">
-            </div>
+
+            {% if not user_send %}
+                <div class="custom-file-upload" style="width:100%">
+                    <label for="data" class="d-flex justify-content-center align-items-center gap-3 pointer">
+                        <span class="material-symbols-outlined fs-3">cloud_upload</span>
+                        <span id="file-names" class="fs-5">Choose files...</span>
+                    </label>
+                    <input type="file" id="data" name="data" class="d-none" multiple onchange="uploadFiles(event)">
+                </div>
+            {% endif %}
             <div id="uploaded-files"></div>
             
                 {% if not user_send %}

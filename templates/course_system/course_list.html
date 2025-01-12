@@ -15,19 +15,31 @@
         <article class="d-flex gap-3">
             {% for course in courses %}
                 <article class="course-container">
-                    <a href="{% url 'course-details' course.pk %}" class="course-link pointer">
-                        <div class="image-container">
-                            {% if course.cover %}
-                                <img src="{{ course.cover.url }}" class="course-cover">
-                            {% else %}
-                                <div class="course-cover box"></div>
-                            {% endif %}
-                            <div class="text-overlay">
-                                <h2>{{ course.name }}</h2>
-                                <h3>{{ course.user }}</h3>
+                    <div class="image-container">
+                        {% if course.cover %}
+                            <img src="{{ course.cover.url }}" class="course-cover">
+                        {% else %}
+                            <div class="course-cover box"></div>
+                        {% endif %}
+                    </div>
+
+                    <div class="text-overlay d-flex justify-content-between">
+                        <a href="{% url 'course-details' course.pk %}" class="course-link pointer">
+                            <h2>{{ course.name }}</h2>
+                            <h3>{{ course.user }}</h3>
+                        </a>
+                        {% if request.user == course.user %}
+                            <div class="dropdown">
+                                <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="material-symbols-outlined">more_vert</span>
+                                </button>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li><a href="{% url 'edit-course' course.pk %}" class="dropdown-item">Edit lesson</a></a></li>
+                                    <li><a href="{% url 'course-delete' course.pk %}" class="dropdown-item">Delete lesson</a></li>
+                                </ul>
                             </div>
-                        </div>
-                    </a>
+                        {% endif %}
+                    </div>
                 </article>
             {% endfor %}
         </article>

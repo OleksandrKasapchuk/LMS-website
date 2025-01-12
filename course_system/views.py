@@ -251,9 +251,9 @@ class UploadAnswerFileView(View):
             answer, created = Answer.objects.get_or_create(
                 user=request.user,
                 lesson=Lesson.objects.get(pk=lesson_pk),
-
             )
-            
+            if answer.user_send:
+                return JsonResponse({'success': False, 'error': "Return your answer before uploading new files."}, status=500)
             uploaded_files = []
 
             # Завантажуємо кожен файл

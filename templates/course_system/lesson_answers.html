@@ -6,34 +6,34 @@
             <article class="d-flex flex-column border border-black rounded p-2 mb-3">
                 {% if answer.user_send %}
                     <section class="d-flex justify-content-between">
-                        <h2>{{answer.user}}</h2>
+                        <h2>{{answer.user}} <i>{% if answer.mark %} {{answer.mark}}/{{answer.lesson.max_mark}} {% else %} Not evaluated {% endif %}</i> 
                         <a href="#" onclick="answerToggle({{answer.pk}})">Look answer</a>
                     </section>
                     
                     <section id="{{answer.pk}}">
                         {% for file in answer.files.all %}
-                        <a href="{{ file.file.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 350px;">
-                            <section class="me-3">
-                                {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
-                                    <img src="{{file.file.url}}" style="width: 90px; height: 60px;">
-                                {% elif file.file.url|endswith:".mp4" %}
-                                    <video style="width: 90px; height: 60px;" muted>
-                                        <source src="{{ file.file.url}}"  type="mp4/video">
-                                        Your browser does not support video tag
-                                    </video>
-                                {% elif file.file.url|endswith:"mp3" %}
-                                    <audio src="{{ file.file.url}}" controls></audio>
-                                {% else %}
-                                    <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
-                                {% endif %}
-                            </section>
-                            <section class="overflow-hidden">
-                                {{ file.file|cut:"answer_media/" }}
-                            </section>
-                        </a>
-
+                            <a href="{{ file.file.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 350px;">
+                                <section class="me-3">
+                                    {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
+                                        <img src="{{file.file.url}}" style="width: 90px; height: 60px;">
+                                    {% elif file.file.url|endswith:".mp4" %}
+                                        <video style="width: 90px; height: 60px;" muted>
+                                            <source src="{{ file.file.url}}"  type="mp4/video">
+                                            Your browser does not support video tag
+                                        </video>
+                                    {% elif file.file.url|endswith:"mp3" %}
+                                        <audio src="{{ file.file.url}}" controls></audio>
+                                    {% else %}
+                                        <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
+                                    {% endif %}
+                                </section>
+                                
+                                <section class="overflow-hidden">
+                                    {{ file.file|cut:"answer_media/" }}
+                                </section>
+                            </a>
                         {% empty %}
-                        <i class="no-lessons">No files uploaded</i>
+                            <i class="no-lessons">Marked as done</i>
                         {% endfor %}
                         <form method="POST" action="{% url 'mark-answer' answer.pk %}">
                             {% csrf_token %}
@@ -41,6 +41,7 @@
                             <input name="mark" id="mark" type="number" value="{% if answer.mark %}{{answer.mark}}{% endif %}">
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>
+
                     </section>
                 </article>
             {% endif %}

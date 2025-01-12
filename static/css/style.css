@@ -40,19 +40,23 @@ li {
 }
 
 .image-container {
-    position: relative;
     display: inline-block;
 }
 
 .course-container {
 	width: 400px;
-    height: 200px;
+    height: 400px;
+    background-color: white;
+    border-radius: 15px;
+    position: relative;
 }
 
 .course-cover {
     width: 400px;
-    height: 200px;
-    border-radius: 15px;
+    height: 150px;
+    object-fit: cover;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
 
 .box {
@@ -62,20 +66,23 @@ li {
 .course-link {
     text-decoration: none; 
     color: inherit; 
+    width: 100%;
+    height: 400px;
+    display: block;
 }
 
 .text-overlay {
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.5); /* Темний напівпрозорий фон */
+    background: rgba(0, 0, 0, 0.5);
     color: white;
-    padding: 5px;
     font-size: 14px;
     width: 100%;
-    text-align: left;
-    border-bottom-left-radius: 15px; /* Закруглення знизу */
-    border-bottom-right-radius: 15px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    height: 150px;
+    padding: 15px;
 }
 
 .pointer {
@@ -105,7 +112,7 @@ li {
 .main-course-cover {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Забезпечує збереження пропорцій */
+    object-fit: cover; 
 	border-radius: 15px;
 }
 
