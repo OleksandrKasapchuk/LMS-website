@@ -84,8 +84,8 @@
                 {% if user_has_answered %}
                     {% for file in user_answer.files.all %}
                         <div class=" position-relative d-flex align-items-center border border-black rounded p-2 mb-3">
-                            <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-dark text-hover">
-                                <section class="me-3">
+                            <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none  text-hover">
+                                <section class="me-2">
                                     {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
                                         <img src="{{ file.file.url }}" alt="Preview" style="width: 90px; height: 60px;">
                                     {% elif file.file.url|endswith:".mp4" %}
@@ -96,11 +96,11 @@
                                         <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
                                     {% endif %}
                                 </section>
-                                <p class="overflow-hidden" style="width: 200px">
+                                <p class="overflow-hidden" style="height: 30px;">
                                     {{ file.file|cut:"answer_media/" }}
                                 </p>
                             </a>
-                            <a href="#" onclick="deleteFile('{{ file.pk }}')" class="position-absolute top-50 end-0 translate-middle-y me-2 text-dark">
+                            <a href="#" onclick="deleteFile('{{ file.pk }}')" class="position-absolute top-50 end-0 translate-middle-y p-2 text-dark">
                                 <span class="material-symbols-outlined">close</span>
                             </a>
                         </div>
@@ -117,7 +117,7 @@
                     <input type="file" id="data" name="data" class="d-none" multiple onchange="uploadFiles(event)">
                 </div>
             {% endif %}
-            <div id="uploaded-files"></div>
+
             
                 {% if not user_send %}
                     <form method="POST" action="{% url 'send-answer' lesson.course.pk lesson.pk %}" class="mt-3">

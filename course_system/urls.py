@@ -7,6 +7,7 @@ urlpatterns = [
     
 	path('join', SubscriptionView.as_view(), name='join-course'),
 	path('create-course', CourseCreateView.as_view(), name='add-course'),
+    path("cancel-subscription/<int:pk>", cancel_subscription, name="cancel-subscription"),
     
 	path('<int:pk>', CourseDetailView.as_view(), name='course-details'),
     

@@ -37,8 +37,8 @@
         
         fileElement.innerHTML = `
             <a href="${file.url}" target="_blank" class="d-flex align-items-center text-decoration-none text-dark text-hover">
-                <section class="me-3">${file.preview}</section>
-                <p class="overflow-hidden" style="width: 200px">${file.name}</p>
+                <section class="me-2">${file.preview}</section>
+                <p class="overflow-hidden" style="height: 30px">${file.name}</p>
             </a>
             <a href="#" onclick="deleteFile('${file.id}')" class="position-absolute top-50 end-0 translate-middle-y me-2 text-dark">
                 <span class="material-symbols-outlined">close</span>

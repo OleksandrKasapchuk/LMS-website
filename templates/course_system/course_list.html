@@ -28,17 +28,19 @@
                             <h2>{{ course.name }}</h2>
                             <h3>{{ course.user }}</h3>
                         </a>
-                        {% if request.user == course.user %}
-                            <div class="dropdown">
-                                <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a href="{% url 'edit-course' course.pk %}" class="dropdown-item">Edit lesson</a></a></li>
-                                    <li><a href="{% url 'course-delete' course.pk %}" class="dropdown-item">Delete lesson</a></li>
-                                </ul>
-                            </div>
-                        {% endif %}
+                        <div class="dropdown">
+                            <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="material-symbols-outlined">more_vert</span>
+                            </button>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                {% if request.user == course.user %}
+                                    <li><a href="{% url 'edit-course' course.pk %}" class="dropdown-item">Edit course</a></a></li>
+                                    <li><a href="{% url 'course-delete' course.pk %}" class="dropdown-item">Delete course</a></li>
+                                {% else %}
+                                    <li><a href="{% url 'cancel-subscription' course.pk %}" class="dropdown-item">Cancel subscription</a></a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
                     </div>
                 </article>
             {% endfor %}

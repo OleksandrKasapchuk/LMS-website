@@ -28,6 +28,7 @@ class CourseView(ListView):
 				context['courses'] = Course.objects.filter(user=self.request.user)
 
 			context['category'] = category
+
 		return context
 
 
@@ -211,16 +212,15 @@ class SubscriptionView(LoginRequiredMixin, View):
 		)
 	
 	def post(self, request, *args, **kwargs):
-		code = request.POST.get("code")  # Отримуємо ID курсу з параметрів URL
-		course = get_object_or_404(Course, code=code)  # Знаходимо курс або повертаємо 404
+		code = request.POST.get("code")
+		course = get_object_or_404(Course, code=code)  
 
-		# Перевіряємо, чи користувач вже підписаний на курс
-		if not Subscription.objects.filter(user=request.user, course=course).exists():
-			# Створюємо нову підписку
-			Subscription.objects.create(user=request.user, course=course)
-			return redirect("index")  # Перенаправляємо на список підписок
+		if not request.user == course.user:
+			if not Subscription.objects.filter(user=request.user, course=course).exists():
+				
+				Subscription.objects.create(user=request.user, course=course)
+				return redirect("index")  # Перенаправляємо на список підписок
 
-		# Якщо вже підписаний, перенаправляємо назад
 		return redirect("course_detail", pk=course.pk)
 	
 
@@ -292,7 +292,8 @@ class AnswerReturnView(LoginRequiredMixin, View):
         answer = lesson.answers.filter(user=user).first()
 
         if answer:
-            answer.delete()  # Видаляємо відповідь
+            answer.user_send = False
+            answer.save()
             return redirect(f'/{lesson.course.pk}/{lesson.pk}')
         else:
             return JsonResponse({'success': False, 'message': 'Робота не знайдена.'}, status=404)
@@ -317,3 +318,10 @@ class MarkView(LoginRequiredMixin, View):
 		answer.save()
 
 		return redirect(f"/{answer.lesson.course.pk}/{answer.lesson.pk}?tab=answers")
+
+
+def cancel_subscription(request, pk):
+	course = get_object_or_404(Course, pk=pk)
+	sub = get_object_or_404(Subscription, course=course,user=request.user)
+	sub.delete()
+	return redirect("index")
