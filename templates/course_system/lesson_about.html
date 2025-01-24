@@ -41,7 +41,7 @@
                         <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
                     {% endif %}
                 </section>
-                <section class="overflow-hidden">
+                <section class="overflow-hidden" style="height: 30px;">
                     {{ lesson.upload_data|cut:"lesson_media/" }}
                 </section>
             </a>
@@ -54,19 +54,23 @@
     <section class="comments-section">
         <ul id="comments" class="comments-list position-relative">
             {% for comment in lesson.comments.all %}
-            <li class="comment-item">
-                <p class="comment-author">
-                    <a href="{% url 'user-info' comment.user.pk %}">
-                        <b>{{ comment.user }}</b>
-                    </a>
-                    {{ comment.date_published|custom_date_format }}
-                </p>
+            <li class="comment-item" id="comment-{{comment.pk}}">
+                <article class="comment-author d-flex justify-content-between">
+                    <section class="d-flex gap-2">
+                        <a href="{% url 'user-info' comment.user.pk %}">
+                            <b>{{ comment.user }}</b>
+                        </a>
+                        {{ comment.date_published|custom_date_format }}
+                    </section>
+                    <span onclick="deleteComment({{comment.pk}})" class="material-symbols-outlined pointer">delete</span>
+                </article>
                 <p class="comment-content">{{ comment.content }}</p>
+                
             </li>
             {% endfor %}
         </ul>
-    
-        <section class="add-comment">
+        <a href="#" onclick="CommentToggle()" id="comment-toggle">Add a Comment</a>
+        <section class="add-comment" id="add-comment">
             <input id="message-content" placeholder="Add a comment..." class="comment-input">
             <button class="send-btn" onclick="SendComment({{ lesson.course.pk }}, {{ lesson.pk }})">Send</button>
         </section>
@@ -77,14 +81,14 @@
     <section class="answer-container">
         <article class="p-4" style="width: 400px;">
             <section class="d-flex justify-content-between">
-                <h4>Your answer</h4> {% if user_send %} <i class="text-muted">{% if mark %} Evaluated {% else %} Uploaded {% endif %}</i> {% endif %}
+                <h4>Your answer</h4> {% if user_send or mark %} <i class="text-muted">{% if mark %} Evaluated {% else %} Uploaded {% endif %}</i> {% endif %}
             </section>
 
             <article id="uploaded-files-container">
                 {% if user_has_answered %}
                     {% for file in user_answer.files.all %}
                         <div class=" position-relative d-flex align-items-center border border-black rounded p-2 mb-3">
-                            <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none  text-hover">
+                            <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-hover">
                                 <section class="me-2">
                                     {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
                                         <img src="{{ file.file.url }}" alt="Preview" style="width: 90px; height: 60px;">
@@ -96,7 +100,7 @@
                                         <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
                                     {% endif %}
                                 </section>
-                                <p class="overflow-hidden" style="height: 30px;">
+                                <p class="overflow-hidden" style="height: 30px;width:200px">
                                     {{ file.file|cut:"answer_media/" }}
                                 </p>
                             </a>

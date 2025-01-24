@@ -107,29 +107,6 @@ class LessonDetailView(LoginRequiredMixin,DetailView):
 	model = Lesson
 	template_name = "course_system/lesson_info.html"
 	
-	def post(self, request,pk, *args, **kwargs):
-		lesson = get_object_or_404(Lesson, pk=pk)
-		content = request.POST.get('content')
-		try:
-			comment = Comment.objects.create(
-			lesson=lesson,
-			user=request.user,
-			content=content
-			)
-			if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-				return JsonResponse({
-					'success': True,
-					'username': request.user.username,
-					'content': comment.content,
-					'avatar_url': request.user.avatar.url,
-					'date_published': comment.date_published,
-					'user_url': reverse_lazy('user-info', kwargs={"pk":comment.user.pk}),
-				})
-			return redirect('lesson-details', pk=comment.lesson.pk, course=comment.lesson.course.pk)
-		except Exception as e:
-			if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-				return JsonResponse({'success': False, 'error': str(e)})
-	
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		lesson = self.get_object()
@@ -319,9 +296,42 @@ class MarkView(LoginRequiredMixin, View):
 
 		return redirect(f"/{answer.lesson.course.pk}/{answer.lesson.pk}?tab=answers")
 
-
 def cancel_subscription(request, pk):
 	course = get_object_or_404(Course, pk=pk)
 	sub = get_object_or_404(Subscription, course=course,user=request.user)
 	sub.delete()
 	return redirect("index")
+
+
+class CommentDeleteView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        comment = get_object_or_404(Comment, pk=self.kwargs['pk'])
+        if comment.user == request.user:
+            comment.delete()
+            return JsonResponse({'success': True})
+        else:
+            raise PermissionDenied
+
+
+class CommentCreateView(LoginRequiredMixin, View):
+	def post(self, request,pk, *args, **kwargs):
+		lesson = get_object_or_404(Lesson, pk=pk)
+		content = request.POST.get('content')
+		try:
+			comment = Comment.objects.create(
+			lesson=lesson,
+			user=request.user,
+			content=content
+			)
+			if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+				return JsonResponse({
+					'success': True,
+					'username': request.user.username,
+					'content': comment.content,
+					'user_url': reverse_lazy('user-info', kwargs={"pk":comment.user.pk}),
+					"comment": comment.pk
+				})
+			return redirect('lesson-details', pk=comment.lesson.pk, course=comment.lesson.course.pk)
+		except Exception as e:
+			if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+				return JsonResponse({'success': False, 'error': f'Error creating comment: {str(e)}'})

@@ -6,7 +6,7 @@
             <article class="d-flex flex-column border border-black rounded p-2 mb-3">
                 {% if answer.user_send %}
                     <section class="d-flex justify-content-between">
-                        <h2>{{answer.user}} <i>{% if answer.mark %} {{answer.mark}}/{{answer.lesson.max_mark}} {% else %} Not evaluated {% endif %}</i> 
+                        <h2>{{answer.user}} <i>{% if answer.mark %} {{answer.mark}}/{{answer.lesson.max_mark}} {% else %} Not evaluated {% endif %}</i> </h2>
                         <a href="#" onclick="answerToggle({{answer.pk}})">Look answer</a>
                     </section>
                     
@@ -21,8 +21,6 @@
                                             <source src="{{ file.file.url}}"  type="mp4/video">
                                             Your browser does not support video tag
                                         </video>
-                                    {% elif file.file.url|endswith:"mp3" %}
-                                        <audio src="{{ file.file.url}}" controls></audio>
                                     {% else %}
                                         <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
                                     {% endif %}

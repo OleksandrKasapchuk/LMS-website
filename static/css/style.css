@@ -225,7 +225,7 @@ li {
     padding: 0;
     margin: 0;
 	overflow-y:scroll;
-	height: 300px;
+	max-height: 300px;
 }
 
 .comments-list::-webkit-scrollbar {
@@ -241,7 +241,6 @@ li {
 .comment-author {
     font-weight: bold;
     font-size: 0.9rem;
-    color: #007bff;
     margin-bottom: 5px;
 }
 
@@ -252,7 +251,7 @@ li {
 
 /* Додавання коментаря */
 .add-comment {
-    display: flex;
+    display: none;
     align-items: center;
     margin-top: 15px;
 }
