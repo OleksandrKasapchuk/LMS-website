@@ -18,7 +18,7 @@
                         {% endif %}
                     </article>
                     
-                    <h4><b>{{user.first_name}} {{user.last_name}}</b></h2>
+                    <h5><b>{{user.first_name}} {{user.last_name}}</b></h5>
                     
                 </article>
             </section>
@@ -26,10 +26,10 @@
             <br>
 
             <section>
-                <h3>User courses:</h3>
+                <h5>User courses:</h5>
                 
                 {% if request.user == user %}
-                    <h4><a href="{% url 'add-course' %}">Create a course</a></h4>
+                    <h5><a href="{% url 'add-course' %}">Create a course</a></h5>
                 {% endif %}
 
                 {% for course in courses %}

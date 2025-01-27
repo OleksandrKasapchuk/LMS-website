@@ -1,0 +1,22 @@
+{% for file in answer.files.all %}
+    <a href="{{ file.file.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 350px;">
+        <section class="me-3">
+            {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
+                <img src="{{file.file.url}}" style="width: 90px; height: 60px;">
+            {% elif file.file.url|endswith:".mp4" %}
+                <video style="width: 90px; height: 60px;" muted>
+                    <source src="{{ file.file.url}}"  type="mp4/video">
+                    Your browser does not support video tag
+                </video>
+            {% else %}
+                <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
+            {% endif %}
+        </section>
+        
+        <section class="overflow-hidden" style="height: 30px;">
+            {{ file.file|cut:"answer_media/" }}
+        </section>
+    </a>
+    {% empty %}
+    <i class="no-lessons">Marked as done</i>
+{% endfor %}

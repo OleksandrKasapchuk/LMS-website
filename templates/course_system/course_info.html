@@ -5,7 +5,7 @@
 {% block content %}
 {% load custom_tags %}
 
-<article class="container mt-3">
+<article class="container mt-3 px-4">
 
 	<figure class="course-cover-container noselect">
 		{% if course.cover %}
@@ -13,20 +13,20 @@
 		{% else %}
 			<div class="course-cover box"></div>
 		{% endif %}
-		<figcaption class="course-caption d-flex flex-column text-light">
+		<figcaption class="course-caption d-flex flex-column text-light position-absolute px-2 py-1 h3">
 			<b>{{ course.name }}</b>
-			<a href="{% url 'user-info' course.user.pk %}" class="text-light fs-4">{{ course.user }}</a>
+			<a href="{% url 'user-info' course.user.pk %}" class="text-light fs-5">{{ course.user }}</a>
 		</figcaption>
 		{% if course.user == request.user %}
-			<a href="{% url 'edit-course' course.pk %}" class="course-edit text-light">Edit <span class="material-symbols-outlined pointer">edit</span></a>
+			<a href="{% url 'edit-course' course.pk %}" class="course-edit text-light position-absolute p-2">Edit <span class="material-symbols-outlined pointer">edit</span></a>
 		{% endif %}
 	</figure>
 	
 	<article class="d-flex gap-3">
 
 		<section class="d-flex flex-column code-container">
-			<h4>Code:</h4> 
-			<b class="fs-3">{{course.code}}</b>
+			<h5>Code:</h5> 
+			<b class="fs-4">{{course.code}}</b>
 		</section>
 		
 		<section class="lesson-grid">

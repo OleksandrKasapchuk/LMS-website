@@ -3,10 +3,12 @@ from django.urls import reverse_lazy
 from .models import *
 from django.views.generic import View, ListView, DetailView,UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from .forms import *
 from .mixins import *
+import logging
 
+logger = logging.getLogger(__name__)
 
 class CourseView(ListView):
 	model = Course
@@ -210,10 +212,6 @@ def send_answer(request, course,pk):
 		created.user_send = True
 		created.save()
 	return redirect(f"/{course}/{pk}")
-
-import logging
-
-logger = logging.getLogger(__name__)
 
 class UploadAnswerFileView(View):
     def post(self, request, course_pk, lesson_pk, *args, **kwargs):

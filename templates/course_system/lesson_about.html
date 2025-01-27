@@ -2,7 +2,7 @@
 
 <section class="d-flex flex-column lesson-main">
     <section class="d-flex justify-content-between">
-        <h1>{{ lesson.name }}  </h1>
+        <h2>{{ lesson.name }}</h2>
 
         {% if request.user == lesson.course.user %}
         <div class="dropdown">
@@ -26,10 +26,10 @@
     <section>
         <p>{{lesson.content}}</p>
         {% if lesson.upload_data %}
-            <a href="{{ lesson.upload_data.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 350px; ::hover {color:blue}">
+            <a href="{{ lesson.upload_data.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover" style="width: 250px;">
                 <section class="me-3">
                     {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
-                        <img src="{{lesson.upload_data.url}}" style="width: 90px; height: 60px;">
+                        <img src="{{lesson.upload_data.url}}" style="width: 50px; height: 40px;">
                     {% elif lesson.upload_data.url|endswith:".mp4" %}
                         <video style="width: 90px; height: 60px;" muted>
                             <source src="{{ lesson.upload_data.url}}"  type="mp4/video">
@@ -50,11 +50,11 @@
 
     <hr>
 
-    <h4>Lesson comments</h4>
+    <h5>Lesson comments</h5>
     <section class="comments-section">
-        <ul id="comments" class="comments-list position-relative">
+        <ul id="comments" class="comments-list">
             {% for comment in lesson.comments.all %}
-            <li class="comment-item" id="comment-{{comment.pk}}">
+            <li class="comment-item position-relative" id="comment-{{comment.pk}}">
                 <article class="comment-author d-flex justify-content-between">
                     <section class="d-flex gap-2">
                         <a href="{% url 'user-info' comment.user.pk %}">
@@ -62,15 +62,27 @@
                         </a>
                         {{ comment.date_published|custom_date_format }}
                     </section>
-                    <span onclick="deleteComment({{comment.pk}})" class="material-symbols-outlined pointer">delete</span>
+                    {% if request.user == comment.user %}
+                    <div class="dropdown">
+                        <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="material-symbols-outlined">more_vert</span>
+                        </button>
+                        <ul class="dropdown-menu custom-dropdown-menu mama">
+                            <li>
+                                <a href="#" class="dropdown-item">Edit comment</a>
+                            </li>
+                            <li>
+                                <a onclick="deleteComment({{comment.pk}})" class="dropdown-item">Delete comment</a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
                 </article>
                 <p class="comment-content">{{ comment.content }}</p>
-                
             </li>
             {% endfor %}
         </ul>
-        <a href="#" onclick="CommentToggle()" id="comment-toggle">Add a Comment</a>
-        <section class="add-comment" id="add-comment">
+        <section class="add-comment d-flex" id="add-comment">
             <input id="message-content" placeholder="Add a comment..." class="comment-input">
             <button class="send-btn" onclick="SendComment({{ lesson.course.pk }}, {{ lesson.pk }})">Send</button>
         </section>
@@ -79,7 +91,7 @@
 
 {% if request.user != lesson.course.user %}
     <section class="answer-container">
-        <article class="p-4" style="width: 400px;">
+        <article class="p-3">
             <section class="d-flex justify-content-between">
                 <h4>Your answer</h4> {% if user_send or mark %} <i class="text-muted">{% if mark %} Evaluated {% else %} Uploaded {% endif %}</i> {% endif %}
             </section>
@@ -91,13 +103,13 @@
                             <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-hover">
                                 <section class="me-2">
                                     {% if file.file.url|endswith:".jpg" or file.file.url|endswith:".jpeg" or file.file.url|endswith:".png" %}
-                                        <img src="{{ file.file.url }}" alt="Preview" style="width: 90px; height: 60px;">
+                                        <img src="{{ file.file.url }}" alt="Preview" style="width: 50px; height: 40px;">
                                     {% elif file.file.url|endswith:".mp4" %}
-                                        <video style="width: 90px; height: 60px;" muted>
+                                        <video style="width: 50px; height: 40px;" muted>
                                             <source src="{{ file.file.url }}" type="video/mp4">
                                         </video>
                                     {% else %}
-                                        <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
+                                        <span class="material-symbols-outlined fs-3">insert_drive_file</span>
                                     {% endif %}
                                 </section>
                                 <p class="overflow-hidden" style="height: 30px;width:200px">
@@ -113,10 +125,10 @@
             </article>
 
             {% if not user_send %}
-                <div class="custom-file-upload" style="width:100%">
+                <div class="custom-file-upload position-relative" style="width:100%">
                     <label for="data" class="d-flex justify-content-center align-items-center gap-3 pointer">
-                        <span class="material-symbols-outlined fs-3">cloud_upload</span>
-                        <span id="file-names" class="fs-5">Choose files...</span>
+                        <span class="material-symbols-outlined fs-4">cloud_upload</span>
+                        <span id="file-names" class="fs-6">Choose files...</span>
                     </label>
                     <input type="file" id="data" name="data" class="d-none" multiple onchange="uploadFiles(event)">
                 </div>
