@@ -115,7 +115,8 @@ class LessonDetailView(LoginRequiredMixin,DetailView):
 		user = self.request.user
 		answer = Answer.objects.filter(user=user, lesson=lesson).first()
 		tab_name = self.request.GET.get('tab', 'about')
-
+		object = self.request.GET.get('object', 'none')
+	
 		if tab_name == 'about':
 			context['lesson'] = lesson
 		elif tab_name == 'answers':
@@ -139,7 +140,8 @@ class LessonDetailView(LoginRequiredMixin,DetailView):
 
 			# Додаємо оцінку за відповідь, якщо вона є
 			context['mark'] = user_answer.mark
-
+		if object is not None:
+			context['answer1'] = Answer.objects.get(pk=object)
 		return context
 
 
@@ -201,7 +203,7 @@ class SubscriptionView(LoginRequiredMixin, View):
 				return redirect("index")  # Перенаправляємо на список підписок
 
 		return redirect("course_detail", pk=course.pk)
-	
+
 
 def send_answer(request, course,pk):
 	answer, created = Answer.objects.get_or_create(user=request.user, lesson=Lesson.objects.get(pk=pk))

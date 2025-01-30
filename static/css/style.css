@@ -264,6 +264,7 @@ li {
     border-radius: 4px;
     cursor: pointer;
 }
+
 .send-btn:hover {
     background-color: #0056b3;
 }
@@ -320,10 +321,6 @@ body.sidebar-loaded #sidebar {
     transition: all 0.3s ease-in-out;
 }
 
-.hidden {
-    display: none;
-}
-
 .custom-file-upload {
     display: inline-block;
     border: 2px dashed #6c757d;
@@ -345,16 +342,25 @@ body.sidebar-loaded #sidebar {
 
 .mark-input {
     background-color: transparent;
-    width: 50px;
+    width: 30px;
     border: 0;
-    border-bottom: 2px solid;
+    border-bottom: 1.5px solid;
     text-align: end;
 }
 
 .mark-input:focus {
     outline: none;
 }
+.mark-form {
+    opacity: 0;
+}
 
+.mark-form:hover {
+    opacity: 1;
+}
+.answer-block:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
 .answer-list {
     width: 350px;
 }

@@ -6,16 +6,13 @@
 {% load custom_tags %}
 
 {% if request.user == lesson.course.user %}
-<header class="d-flex gap-3 mb-3 ps-4 pt-2">
+<header class="d-flex gap-3 ms-2  p-2 border-bottom border-black">
     <span onclick="loadTab('about')" class="pointer {% if tab == 'about' %}my-active {% else %} gray-text {% endif %}">About</span>
     <span onclick="loadTab('answers')" class="pointer {% if tab == 'answers' %}my-active {% else %} gray-text {% endif %}">Answers</span>
 </header>
-<hr>
 {% endif %}
 
-<br>
-
-<article class="d-flex container gap">
+<article class="d-flex ms-2 gap">
     {% if tab == 'about' %}
         {% include './lesson_about.html' %}
     {% else %}
@@ -202,8 +199,11 @@
             console.error('Error:', error);
             alert("An error occurred while deleting the comment.");
         });
+        }
     }
-}
+    function toggleUserAnswer(answerId) {
+        window.location.href = `?tab=answers&object=${answerId}`;
+    }
 
 </script>
 {% endblock %}

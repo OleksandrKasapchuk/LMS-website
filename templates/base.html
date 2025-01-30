@@ -116,7 +116,7 @@
 			const sidebar = document.getElementById('sidebar');
 			const main = document.getElementById('main');
 			if (localStorage.getItem('sidebarVisible') === 'false') {
-				sidebar.classList.add('hidden');
+				sidebar.style.display = 'none';
 				main.classList.add('justify-content-center');
 			}
 		});
@@ -124,13 +124,15 @@
 		// Функція для перемикання видимості сайдбара
 		function toggleSidebar() {
 			const sidebar = document.getElementById('sidebar');
-			const isHidden = sidebar.classList.contains('hidden');
+			const isHidden = sidebar.style.display != 'block';
 			
 			if (isHidden) {
-				sidebar.classList.remove('hidden');
+				sidebar.style.display = 'block';
+				main.classList.remove('justify-content-center');
 				localStorage.setItem('sidebarVisible', 'true'); // Зберігаємо стан
 			} else {
-				sidebar.classList.add('hidden');
+				sidebar.style.display = 'none';
+				main.classList.add('justify-content-center');
 				localStorage.setItem('sidebarVisible', 'false'); // Зберігаємо стан
 			}
 		}

@@ -3,19 +3,22 @@
 {% if answers %}
     <article class="d-flex flex-column answer-list">
         {% for answer in answers %}
-            <article class="d-flex border border-black rounded mb-3">
+            <article class="d-flex border border-black border-top-0 answer-block">
                 {% if answer.user_send %}
-                    <section class="answer-user p-2"><h4 class="overflow-hidden">{{answer.user}}</h4></section>
+                    <section class="answer-user p-2" onclick="toggleUserAnswer({{answer.pk}})"><h4 class="overflow-hidden">{{answer.user}}</h4></section>
                     
-                    <form method="POST" action="{% url 'mark-answer' answer.pk %}">
+                    <form method="POST" action="{% url 'mark-answer' answer.pk %}" class="d-flex align-items-center justify-content-center px-4 mark-form">
                         {% csrf_token %}
                         <input class="mark-input" name="mark" id="mark" value="{% if answer.mark %}{{answer.mark}}{% endif %}">
                         <label for="mark">/{{answer.lesson.max_mark}}</label>
-                        <button type="submit" class="btn btn-primary">OK</button>
+                        <button type="submit" class="btn btn-primary">ok</button>
                     </form>
                 </article>
             {% endif %}
         {% endfor %}
+    </article>
+    <article id="user-answer" class="border border-black" style="width:50vw; height:70vh">
+        {% include './user_answer.html' %}
     </article>
 {% else %}
     <h3><i class="no-lessons">No answers yet</i></h3>
