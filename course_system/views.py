@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from .models import *
 from django.views.generic import View, ListView, DetailView,UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from .forms import *
 from .mixins import *
 import logging
@@ -108,40 +108,42 @@ class LessonCreateView(LoginRequiredMixin, View):
 class LessonDetailView(LoginRequiredMixin,DetailView):
 	model = Lesson
 	template_name = "course_system/lesson_info.html"
-	
+
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
+
 		lesson = self.get_object()
 		user = self.request.user
-		answer = Answer.objects.filter(user=user, lesson=lesson).first()
+		context['lesson'] = lesson
+
 		tab_name = self.request.GET.get('tab', 'about')
-		object = self.request.GET.get('object', None)
-	
-		if tab_name == 'about':
-			context['lesson'] = lesson
-		elif tab_name == 'answers':
+		
+		if tab_name == 'answers':
 			if user == lesson.course.user:
-				context["answers"] = Answer.objects.filter(lesson=self.object, user_send=True)
+				context["tab"] = tab_name
+				answers = Answer.objects.filter(lesson=self.object, user_send=True)
+
+				context["answers"] = answers
+
+				answer = self.request.GET.get('object', None)
+
+				if answer is not None:
+					context['answer'] = get_object_or_404(Answer,pk=answer)
+				
+				context["uploaded"] = answers.filter(user_send=True).count()
+				context["assigned"] = answers.filter(user_send=False).count()
+				context["evaluated"] = answers.filter(mark__isnull=False).count()
+
 			else:
 				raise PermissionDenied
-		if answer:
-			context["user_send"] = answer.user_send
-			context['answer'] = answer
+		else:
+			context["tab"] = "about"
+			if user != lesson.course.user:
+				answer = Answer.objects.filter(user=user, lesson=lesson).first()
 
-		context["tab"] = tab_name
-
-		# Перевіряємо, чи користувач здав роботу
-		user_answer = lesson.answers.filter(user=user).first()
-		context['user_has_answered'] = user_answer is not None
-
-		if user_answer:
-			# Додаємо відповідь користувача
-			context['user_answer'] = user_answer
-
-			# Додаємо оцінку за відповідь, якщо вона є
-			context['mark'] = user_answer.mark
-		if object is not None:
-			context['answer1'] = Answer.objects.get(pk=object)
+				if answer:
+					context['answer'] = answer
+					context['mark'] = answer.mark
 		return context
 
 

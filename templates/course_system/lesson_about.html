@@ -1,19 +1,20 @@
 {% load custom_tags %}
 
-<section class="d-flex flex-column lesson-main ms-4">
+<section class="d-flex flex-column lesson-main ms-4 mt-2">
     <section class="d-flex justify-content-between">
         <h2>{{ lesson.name }}</h2>
 
         {% if request.user == lesson.course.user %}
-        <div class="dropdown">
-            <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="material-symbols-outlined">more_vert</span>
-            </button>
-            <ul class="dropdown-menu custom-dropdown-menu">
-                <li><a href="{% url 'lesson-edit' lesson.course.pk lesson.pk %}" class="dropdown-item">Edit lesson</a></a></li>
-                <li><a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}" class="dropdown-item">Delete lesson</a></li>
-            </ul>
-        </div>
+            <div class="dropdown">
+                <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="material-symbols-outlined">more_vert</span>
+                </button>
+
+                <ul class="dropdown-menu custom-dropdown-menu">
+                    <li><a href="{% url 'lesson-edit' lesson.course.pk lesson.pk %}" class="dropdown-item">Edit lesson</a></a></li>
+                    <li><a href="{% url 'lesson-delete' lesson.course.pk lesson.pk %}" class="dropdown-item">Delete lesson</a></li>
+                </ul>
+            </div>
         {% endif %}
     </section>
 
@@ -97,8 +98,8 @@
             </section>
 
             <article id="uploaded-files-container">
-                {% if user_has_answered %}
-                    {% for file in user_answer.files.all %}
+                {% if answer %}
+                    {% for file in answer.files.all %}
                         <div class=" position-relative d-flex align-items-center border border-black rounded p-2 mb-3">
                             <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-hover">
                                 <section class="me-2">
@@ -124,7 +125,7 @@
                 {% endif %}
             </article>
 
-            {% if not user_send %}
+            {% if not answer.user_send %}
                 <div class="custom-file-upload position-relative" style="width:100%">
                     <label for="data" class="d-flex justify-content-center align-items-center gap-3 pointer">
                         <span class="material-symbols-outlined fs-4">cloud_upload</span>

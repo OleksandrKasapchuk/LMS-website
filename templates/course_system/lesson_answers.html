@@ -1,6 +1,5 @@
 {% load custom_tags %}
 
-
 <article class="d-flex flex-column answer-list">
     {% for answer in answers %}
         <article class="d-flex border border-black border-top-0 border-end-0 answer-block">
@@ -15,16 +14,17 @@
         </article>
     {% endfor %}
 </article>
+
 <article id="user-answer" class="border border-black border-end-0 border-top-0 p-2" style="width:70vw; height:90vh">
-    {% if answer1 %}
-        <article onclick="loadTab('answers')" class="d-flex pointer justify-content-end"><span class="material-symbols-outlined">close</span></article>
+    {% if answer %}
+        <article class="d-flex justify-content-end"><span onclick="loadTab('answers')" class="material-symbols-outlined pointer">close</span></article>
         <section class="d-flex justify-content-between">
-            <h2>{{answer1.user}}</h2>
-            <b>{% if answer1.mark %} {{answer1.mark}}/{{lesson.max_mark}} {% else %} Not evaluated {% endif %}</b>
+            <h2>{{answer.user}}</h2>
+            <b>{% if answer.mark %} {{answer.mark}}/{{lesson.max_mark}} {% else %} Not evaluated {% endif %}</b>
         </section>
 
-        {% if answer1.files %}
-            {% for file in answer1.files.all %}
+        {% if answer.files %}
+            {% for file in answer.files.all %}
                 <div class=" position-relative d-flex align-items-center border border-black rounded p-2 mb-3">
                     <a href="{{ file.file.url }}" target="_blank" class="d-flex align-items-center text-decoration-none text-hover">
                         <section class="me-2">
@@ -49,9 +49,9 @@
     {% else %}
         <h3>{{lesson.name}}</h3>
         <ul class="d-flex gap">
-            <li>Uploaded</li>
-            <li>Assigned</li>
-            <li>Evaluated</li>
+            <li class="d-flex flex-column"><p>Uploaded</p> <p>{{uploaded}}</p></li>
+            <li class="d-flex flex-column"><p>Assigned</p><p>{{assigned}}</p></li>
+            <li class="d-flex flex-column"><p>Evaluated</p> <p>{{evaluated}}</p></li>
         </ul>
     {% endif %}
 </article>
