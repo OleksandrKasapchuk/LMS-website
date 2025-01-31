@@ -348,16 +348,17 @@ body.sidebar-loaded #sidebar {
     text-align: end;
 }
 
-.mark-input:focus {
-    outline: none;
-}
 .mark-form {
     opacity: 0;
 }
+.mark-input:focus {
+    outline: none;
+}
 
-.mark-form:hover {
+.mark-form:hover, .mark-form:focus {
     opacity: 1;
 }
+
 .answer-block:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }

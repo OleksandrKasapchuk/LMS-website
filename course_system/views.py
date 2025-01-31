@@ -115,7 +115,7 @@ class LessonDetailView(LoginRequiredMixin,DetailView):
 		user = self.request.user
 		answer = Answer.objects.filter(user=user, lesson=lesson).first()
 		tab_name = self.request.GET.get('tab', 'about')
-		object = self.request.GET.get('object', 'none')
+		object = self.request.GET.get('object', None)
 	
 		if tab_name == 'about':
 			context['lesson'] = lesson
@@ -246,7 +246,7 @@ class UploadAnswerFileView(View):
                     'url': uploaded_file.file.url,
                     'name': uploaded_file.file.name.split('/')[-1],
                     'preview': (
-                        f'<img src="{uploaded_file.file.url}" style="width: 90px; height: 60px;">'
+                        f'<img src="{uploaded_file.file.url}" style="width: 50px; height: 40px;">'
                         if file.content_type.startswith('image') 
                         else '<span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>'
                     ),

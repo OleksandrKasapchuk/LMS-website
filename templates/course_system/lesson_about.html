@@ -90,8 +90,8 @@
 </section>
 
 {% if request.user != lesson.course.user %}
-    <section class="answer-container">
-        <article class="p-3">
+    <section class="answer-container ms-3">
+        <article class="p-3" style="width: 300px;">
             <section class="d-flex justify-content-between">
                 <h4>Your answer</h4> {% if user_send or mark %} <i class="text-muted">{% if mark %} Evaluated {% else %} Uploaded {% endif %}</i> {% endif %}
             </section>
@@ -132,20 +132,18 @@
                     </label>
                     <input type="file" id="data" name="data" class="d-none" multiple onchange="uploadFiles(event)">
                 </div>
-            {% endif %}
 
-            
-                {% if not user_send %}
-                    <form method="POST" action="{% url 'send-answer' lesson.course.pk lesson.pk %}" class="mt-3">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary" style="width:100%" id="send-btn">{% if answer.files.all %}Send answer{% else %}Mark as done{% endif %}</button>
-                    </form>
-                {% else %}
-                    <form method="POST" action="{% url 'return-answer' lesson.course.pk lesson.pk %}" class="mt-3">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger" style="width:100%">Return answer</button>
-                    </form>
-                {% endif %}
+                <form method="POST" action="{% url 'send-answer' lesson.course.pk lesson.pk %}" class="mt-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary" style="width:100%" id="send-btn">{% if answer.files.all %}Send answer{% else %}Mark as done{% endif %}</button>
+                </form>
+                
+            {% else %}
+                <form method="POST" action="{% url 'return-answer' lesson.course.pk lesson.pk %}" class="mt-3">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" style="width:100%">Return answer</button>
+                </form>
+            {% endif %}
         </article>
     </section>
 {% endif %}
