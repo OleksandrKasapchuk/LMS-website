@@ -121,7 +121,13 @@ li {
 .course-edit {
 	right: 10px;
 	top: 10px;
-	background-color: rgba(0, 0, 0,0.3);
+	background-color: rgba(0, 0, 0,0.4);
+	border-radius: 10px;
+}
+.add-user-to-course {
+	right: 10px;
+	bottom: 10px;
+	background-color: rgba(0, 0, 0,0.4);
 	border-radius: 10px;
 }
 

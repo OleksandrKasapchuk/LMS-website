@@ -4,10 +4,10 @@ from .models import *
 from django.views.generic import View, ListView, DetailView,UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponse
+from django.contrib import messages
 from .forms import *
 from .mixins import *
 import logging
-
 logger = logging.getLogger(__name__)
 
 class CourseView(ListView):
@@ -215,9 +215,30 @@ class SubscriptionView(LoginRequiredMixin, View):
 			if not Subscription.objects.filter(user=request.user, course=course).exists():
 				
 				Subscription.objects.create(user=request.user, course=course)
-				return redirect("index")  # Перенаправляємо на список підписок
+				return redirect("index")
 
-		return redirect("course_detail", pk=course.pk)
+		return redirect("course-details", pk=course.pk)
+
+
+class AddUserView(LoginRequiredMixin, View):
+	model = Course
+	def get(self, request, *args, **kwargs):
+		return render(
+			request,
+			"course_system/adduser.html"
+		)
+	def post(self, request, pk, *args, **kwargs):
+		username = request.POST.get("username")
+		user = get_object_or_404(CustomUser, username=username)  
+		if not request.user == user:
+			if not Subscription.objects.filter(user=user, course=Course.objects.get(pk=pk)).exists():
+				Subscription.objects.create(user=user, course=Course.objects.get(pk=pk))
+				return redirect("course-details", pk=pk)
+			else:
+				messages.error(request, ("The user is already in course!"))
+		else:
+			messages.error(request, ("You cannot add yourself to your course!"))
+		return redirect("adduser", pk=pk)
 
 
 def send_answer(request, course,pk):

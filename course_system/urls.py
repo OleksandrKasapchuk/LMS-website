@@ -5,6 +5,7 @@ from .views import *
 urlpatterns = [
 	path('', CourseView.as_view(), name='index'),
     
+	path('<int:pk>/adduser', AddUserView.as_view(), name='adduser'),
 	path('join', SubscriptionView.as_view(), name='join-course'),
 	path('create-course', CourseCreateView.as_view(), name='add-course'),
     path("cancel-subscription/<int:pk>", cancel_subscription, name="cancel-subscription"),

@@ -19,7 +19,8 @@
 		</figcaption>
 		{% if course.user == request.user %}
 			<a href="{% url 'edit-course' course.pk %}" class="course-edit text-light position-absolute p-2">Edit <span class="material-symbols-outlined pointer">edit</span></a>
-		{% endif %}
+			<a href="{% url 'adduser' course.pk %}" class="add-user-to-course text-light position-absolute p-2">Add user</a>
+			{% endif %}
 	</figure>
 	
 	<article class="d-flex gap-3">
@@ -30,8 +31,9 @@
 		</section>
 		
 		<section class="lesson-grid">
-
+			
 			{% if course.user == request.user %}
+				
 				<a class="add-lesson-btn" href="{% url 'add-lesson' course.pk %}">Add Lesson<span class="material-symbols-outlined">add_box</span></a>
 			{% endif %}
 		
