@@ -2,20 +2,69 @@
 
 <article class="d-flex flex-column answer-list">
     {% for answer in answers %}
-        <article class="d-flex border border-black border-top-0 border-end-0 answer-block">
-            <section class="answer-user p-2" onclick="toggleUserAnswer({{answer.pk}})"><h4 class="overflow-hidden">{{answer.user}}</h4></section>
-            
-            <form method="POST" action="{% url 'mark-answer' answer.pk %}" class="d-flex align-items-center justify-content-center px-4 mark-form">
-                {% csrf_token %}
-                <input class="mark-input" name="mark" id="mark" value="{% if answer.mark %}{{answer.mark}}{% endif %}">
-                <label for="mark">/{{answer.lesson.max_mark}}</label>
-                <button type="submit" class="btn btn-primary">ok</button>
-            </form>
-        </article>
+    <article class="d-flex border border-black border-top-0 border-end-0 answer-block">
+        <section class="answer-user p-2" onclick="toggleUserAnswer({{ answer.pk }})">
+            <h5 class="overflow-hidden">{{ answer.user }}</h5>
+        </section>
+        
+        <form method="POST" class="d-flex align-items-center justify-content-center px-4">
+            {% csrf_token %}
+            <input class="mark-input text-success" name="mark" id="mark-{{ answer.pk }}" data-answer-id="{{ answer.pk }}" value="{% if answer.mark %}{{ answer.mark }}{% endif %}">
+            <label for="mark" class="text-success">/{{ answer.lesson.max_mark }}</label>
+        
+            <div class="dropdown">
+                <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="material-symbols-outlined">more_vert</span>
+                </button>
+        
+                <ul class="dropdown-menu custom-dropdown-menu">
+                    <li>
+                        <button type="button" class="dropdown-item" onclick="submitMark({{ answer.pk }}, document.getElementById('mark-{{ answer.pk }}').value)">Give mark</button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item" onclick="deleteMark({{ answer.pk }})">Delete mark</button>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </article>
+    {% endfor %}
+
+    <!-- Відображення студентів, які не здали роботу -->
+    <h4 class="mt-4">Не здано</h4>
+    {% for user in not_submitted %}
+    <article class="d-flex border border-black border-top-0 border-end-0 answer-block">
+        <section class="answer-user p-2">
+            <h5 class="overflow-hidden">{{ user }}</h5>
+        </section>
+        
+        <form method="POST" class="d-flex align-items-center justify-content-center px-4 mark-form">
+            <input class="mark-input">
+            <label>/{{ lesson.max_mark }}</label>
+
+            <div class="dropdown">
+                <button class="nav-link active d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="material-symbols-outlined">more_vert</span>
+                </button>
+        
+                <ul class="dropdown-menu custom-dropdown-menu">
+                    <li>
+                        <button type="button" class="dropdown-item" onclick="submitMark({{ answer.pk }}, document.getElementById('mark-{{ answer.pk }}').value)">Give mark</button>
+                    </li>
+                    <li>
+                        <button type="button" class="dropdown-item" onclick="deleteMark({{ answer.pk }})">Delete mark</button>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </article>
+    {% empty %}
+        <p>Всі студенти здали роботу.</p>
     {% endfor %}
 </article>
 
-<article id="user-answer" class="border border-black border-end-0 border-top-0 p-2" style="width:70vw; height:90vh">
+
+<article id="user-answer" class="border border-black border-end-0 border-top-0 p-3" style="width:70vw; height:90vh">
     {% if answer %}
         <article class="d-flex justify-content-end"><span onclick="loadTab('answers')" class="material-symbols-outlined pointer">close</span></article>
         <section class="d-flex justify-content-between">
@@ -48,10 +97,36 @@
 
     {% else %}
         <h3>{{lesson.name}}</h3>
-        <ul class="d-flex gap">
-            <li class="d-flex flex-column"><p>Uploaded</p> <p>{{uploaded}}</p></li>
-            <li class="d-flex flex-column"><p>Assigned</p><p>{{assigned}}</p></li>
-            <li class="d-flex flex-column"><p>Evaluated</p> <p>{{evaluated}}</p></li>
+        <ul class="d-flex p-0 gap">
+            <li class="d-flex flex-column"><h3>{{uploaded}}</h3>Uploaded </li>
+            <li class="d-flex flex-column border-start border-black ps-3"><h3>{{assigned}}</h3>Assigned</li>
+            {% if evaluated %}
+                <li class="d-flex flex-column border-start border-black ps-3">
+                    <h3 id="evaluated-count">{{ evaluated }}</h3>Evaluated
+                </li>
+            {% endif %}
+
         </ul>
+        {% if lesson.upload_data %}
+            <a href="{{ lesson.upload_data.url}}" target="_blank" class="d-flex align-items-center border border-black rounded p-2 mb-3 text-hover">
+                <section class="me-3">
+                    {% if lesson.upload_data.url|endswith:".jpg" or lesson.upload_data.url|endswith:".jpeg" or lesson.upload_data.media.url|endswith:".png" %}
+                        <img src="{{lesson.upload_data.url}}" style="width: 50px; height: 40px;">
+                    {% elif lesson.upload_data.url|endswith:".mp4" %}
+                        <video style="width: 90px; height: 60px;" muted>
+                            <source src="{{ lesson.upload_data.url}}"  type="mp4/video">
+                            Your browser does not support video tag
+                        </video>
+                    {% elif lesson.upload_data.url|endswith:"mp3" %}
+                        <audio src="{{ lesson.upload_data.url}}" controls></audio>
+                    {% else %}
+                        <span class="material-symbols-outlined" style="font-size: 48px;">insert_drive_file</span>
+                    {% endif %}
+                </section>
+                <section class="overflow-hidden" style="height: 30px;">
+                    {{ lesson.upload_data|cut:"lesson_media/" }}
+                </section>
+            </a>
+        {% endif %}
     {% endif %}
 </article>

@@ -19,10 +19,9 @@ def register_user(request):
             name = request.POST.get('first_name')
             surname = request.POST.get('last_name')
             email = request.POST.get('email')
-            bio = request.POST.get('bio')
             password = request.POST.get('password')
             
-            new_user = CustomUser.objects.create_user(username=username, first_name=name, last_name=surname, email=email ,password=password, bio=bio)
+            new_user = CustomUser.objects.create_user(username=username, first_name=name, last_name=surname, email=email ,password=password)
             new_user.save()
             user = authenticate(username=username, first_name=name, last_name=surname, email=email, password=password)
             login(request, user)
@@ -85,7 +84,6 @@ def edit_user(request, user_id):
             name = request.POST.get('first_name')
             surname = request.POST.get('last_name')
             email = request.POST.get('email')
-            bio = request.POST.get('bio')
             avatar = request.FILES.get('avatar')
 
             user = CustomUser.objects.get(id=user_id)
@@ -93,7 +91,6 @@ def edit_user(request, user_id):
             user.email=email
             user.first_name=name
             user.last_name=surname
-            user.bio = bio
             if avatar != None:
                 user.avatar=avatar
             user.save()

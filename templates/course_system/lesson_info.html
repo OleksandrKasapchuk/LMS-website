@@ -206,6 +206,50 @@
     function toggleUserAnswer(answerId) {
         window.location.href = `?tab=answers&object=${answerId}`;
     }
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".mark-input").forEach(input => {
+        input.addEventListener("change", function () {
+            let answerId = this.dataset.answerId;
+            submitMark(answerId, this.value);
+        });
+    });
+});
+
+function submitMark(answerId, markValue) {
+    let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+    
+    fetch(`/mark-answer/${answerId}/`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `mark=${markValue}`,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.querySelector(`#mark-${answerId}`).value = data.mark || "";
+            updateEvaluatedCount(data.evaluated);
+        } else {
+            alert("Error saving mark.");
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+// Видалення оцінки
+function deleteMark(answerId) {
+    submitMark(answerId, "");
+}
+
+// Оновлення лічильника оцінених робіт
+function updateEvaluatedCount(count) {
+    let evaluatedElement = document.getElementById("evaluated-count");
+    if (evaluatedElement) {
+        evaluatedElement.textContent = count;
+    }
+}
 
 </script>
 {% endblock %}

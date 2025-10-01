@@ -30,5 +30,5 @@ urlpatterns = [
 	path('<int:course>/<int:pk>/return-answer', AnswerReturnView.as_view(), name='return-answer'),
     
 	path('delete-file/<int:pk>', DeleteUploadedFileView.as_view(), name='delete-file'),
-	path('mark/<int:pk>', MarkView.as_view(), name='mark-answer'),
+	path('mark-answer/<int:pk>/', MarkView.as_view(), name='mark-answer'),
 ]

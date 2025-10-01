@@ -298,7 +298,6 @@ li {
 @keyframes slideDown {
     from {
         opacity: 0;
-
     }
     to {
         opacity: 1;
@@ -309,16 +308,6 @@ li {
     border-radius: 20px;
     height: fit-content;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-}
-
-/* Стиль, щоб не було видимих "помилок" при завантаженні сторінки */
-body.sidebar-loaded #sidebar {
-    transition: none;
-}
-
-/* Плавна анімація для сайдбара */
-#sidebar {
-    transition: all 0.3s ease-in-out;
 }
 
 .custom-file-upload {
@@ -348,20 +337,14 @@ body.sidebar-loaded #sidebar {
     text-align: end;
 }
 
-.mark-form {
-    opacity: 0;
-}
 .mark-input:focus {
     outline: none;
-}
-
-.mark-form:hover, .mark-form:focus {
-    opacity: 1;
 }
 
 .answer-block:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
+
 .answer-list {
     width: 350px;
 }

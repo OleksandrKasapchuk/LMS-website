@@ -121,9 +121,22 @@ class LessonDetailView(LoginRequiredMixin,DetailView):
 		if tab_name == 'answers':
 			if user == lesson.course.user:
 				context["tab"] = tab_name
-				answers = Answer.objects.filter(lesson=self.object, user_send=True)
-
+				
+				answers = Answer.objects.filter(lesson=lesson, user_send=True)
 				context["answers"] = answers
+
+				# Отримуємо всіх студентів, підписаних на курс
+				subscribed_users = CustomUser.objects.filter(subscriptions__course=lesson.course)
+
+				# Створюємо множину користувачів, які вже здали роботу
+				answered_users = set(answers.values_list("user", flat=True))
+
+				# Визначаємо студентів, які ще не здали роботу
+				not_submitted = subscribed_users.exclude(id__in=answered_users)
+
+
+				# Додаємо "не здано" у контекст
+				context["not_submitted"] = not_submitted
 
 				answer = self.request.GET.get('object', None)
 
@@ -208,6 +221,11 @@ class SubscriptionView(LoginRequiredMixin, View):
 
 
 def send_answer(request, course,pk):
+	lesson = Lesson.objects.get(pk=pk)
+	
+	if not Subscription.objects.filter(user=request.user, course=lesson.course).exists():
+		return redirect(f"/{course}/{pk}?error=not_subscribed")
+	
 	answer, created = Answer.objects.get_or_create(user=request.user, lesson=Lesson.objects.get(pk=pk))
 	if answer != None:
 		answer.user_send = True
@@ -217,9 +235,15 @@ def send_answer(request, course,pk):
 		created.save()
 	return redirect(f"/{course}/{pk}")
 
+
 class UploadAnswerFileView(View):
     def post(self, request, course_pk, lesson_pk, *args, **kwargs):
         try:
+            lesson = get_object_or_404(Lesson, pk=lesson_pk)
+
+            if not Subscription.objects.filter(user=request.user, course=lesson.course).exists():
+                return JsonResponse({'success': False, 'error': 'You are not subscribed to this course'}, status=403)
+
             files = request.FILES.getlist('files[]')
             if not files:
                 return JsonResponse({'success': False, 'error': 'No files received'}, status=400)
@@ -289,14 +313,21 @@ class DeleteUploadedFileView(LoginRequiredMixin, View):
 
 
 class MarkView(LoginRequiredMixin, View):
-	def post(self, request, *args, **kwargs):
-		answer = get_object_or_404(Answer, pk=self.kwargs["pk"])
-		
-		mark = request.POST.get('mark')
-		answer.mark = mark
-		answer.save()
+    def post(self, request, *args, **kwargs):
+        answer = get_object_or_404(Answer, pk=self.kwargs["pk"])
+        
+        mark = request.POST.get("mark")
+        if mark is not None and mark.strip() != "":
+            answer.mark = mark
+        else:
+            answer.mark = None  # Якщо пусте значення — видаляємо оцінку
+            
+        answer.save()
 
-		return redirect(f"/{answer.lesson.course.pk}/{answer.lesson.pk}?tab=answers")
+        # Оновлення кількості оцінених робіт
+        evaluated_count = Answer.objects.filter(lesson=answer.lesson, mark__isnull=False).count()
+
+        return JsonResponse({"success": True, "mark": answer.mark, "evaluated": evaluated_count})
 
 def cancel_subscription(request, pk):
 	course = get_object_or_404(Course, pk=pk)
